@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+
+{% block title %}xpath{% endblock %}
+
+{% block content %}
+<p class="h1">Xpath '{{this_variable.xpath }}'</p>
+<p class="lead">DB Table: <strong>{{this_variable.db_table }}</strong></p>
+<p class="lead">DB Name: <strong>{{this_variable.db_name }}</strong></p>
+<p class="lead">IRS Type: {{this_variable.irs_type }}</p>
+<p class="lead">Form: {{this_variable.parent_sked }}</p>
+<p class="lead">Part: {{this_variable.parent_sked_part }}</p>
+<p class="lead">Line number: {{this_variable.line_number }}</p>
+<p class="lead">Description: {{this_variable.description }}</p>
+
+
+<p class="lead">Repeating: {{this_variable.in_a_group }}</p>
+<p class="lead">versions: {{this_variable.versions }}</p>
+
+{% if line_numbers %}
+<p class="h3">Multiple line numbers:</p>
+{% for line_number in line_numbers %}
+<p class="lead">Line number: {{line_number.line_number }}</p>
+<p class="lead">Versions: {{line_number.versions }}</p>
+<br>
+{% endfor %}
+{% endif %}
+
+{% if descriptions %}
+<p class="h3">Multiple descriptions</p>
+{% for description in descriptions %}
+<p class="lead">Description: {{description.description }}</p>
+<p class="lead">Versions: {{description.versions }}</p>
+<br>
+{% endfor %}
+{% endif %}
+
+{% endblock  %}

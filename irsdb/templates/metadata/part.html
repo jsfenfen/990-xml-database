@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+
+{% block title %}{{this_part.parent_sked }}: {{ this_part.part_name}}{% endblock %}
+
+{% block content %}
+<p class="h1"> <a href="/metadata/forms/#{{this_part.parent_sked }}">{{this_part.parent_sked }}</a>: {{ this_part.part_name}}</p>
+
+    {% for variable in variables %}
+    <p class="h3">{{variable.db_name}}</p>
+        <p class="lead">Line Number: {{variable.line_number}}
+            <br>Description: {{variable.description}}  
+            <br>Type: {{variable.db_type}}
+            <br>Canonical Xpath: {{variable.xpath}}
+        </p>
+    {% endfor %}
+
+{% endblock  %}

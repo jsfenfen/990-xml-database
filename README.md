@@ -1,7 +1,7 @@
 # 990-xml-database
-Django app to consume and store 990 data and metadata
+Django app to consume and store 990 data and metadata. Depends on [irsx](https://github.com/jsfenfen/990-xml-reader) (which is installed as a dependency below).
 
-## To setup
+## Setup
 
 1. git clone this repository `git clone https://github.com/jsfenfen/990-xml-database.git` and `$ cd 990-xml-database`
 

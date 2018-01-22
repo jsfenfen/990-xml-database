@@ -27,12 +27,18 @@ class Group(IRSxBase):
     line_number = models.CharField(max_length=255, blank=True, null=True, help_text="IRS-supplied line numbers. Missing for returnheaders", editable=False) 
     description = models.TextField(help_text="IRS-supplied description, from .xsd. ") 
     headless = models.NullBooleanField(help_text="", default=False) 
-    versions = models.TextField(help_text="IRS-supplied description, from .xsd. ") 
+    versions = models.TextField(help_text="IRS-supplied description, from .xsd. ")
+
+    def get_absolute_url(self):
+        return ("/metadata/groups/%s" % self.db_name)
 
 class SchedulePart(IRSxBase):
     part_name = models.CharField(max_length=255, blank=True, null=True, help_text="Part Name.", editable=False) 
     xml_root = models.CharField(max_length=255, blank=True, null=True, help_text="xpath", editable=False) #is this not equivalent to xpath? 
     is_shell = models.NullBooleanField(help_text="", default=False) 
+
+    def get_absolute_url(self):
+        return ("/metadata/parts/%s" % self.parent_sked_part)
 
 
 # For historic reference to precise line_numbers, descriptions

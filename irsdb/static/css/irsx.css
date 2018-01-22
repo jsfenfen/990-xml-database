@@ -1,0 +1,26 @@
+body {
+  padding-top: 50px;
+}
+
+.body_template {
+  padding-left: 15px;
+  text-align: left;
+}
+
+.indent1 {
+    padding-left: 15px;
+}
+
+.indent2 {
+    padding-left: 30px;
+}
+
+.indent3 {
+    padding-left: 45px;
+}
+
+.anchor {
+    display:block;
+    padding-top:50px;
+    margin-top:-50px;
+ }
