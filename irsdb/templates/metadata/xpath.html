@@ -1,36 +1,47 @@
 {% extends "base.html" %}
 
 
-{% block title %}xpath{% endblock %}
+{% block title %}Xpath {{this_variable.xpath }}{% endblock %}
 
 {% block content %}
-<p class="h1">Xpath '{{this_variable.xpath }}'</p>
-<p class="lead">DB Table: <strong>{{this_variable.db_table }}</strong></p>
-<p class="lead">DB Name: <strong>{{this_variable.db_name }}</strong></p>
-<p class="lead">IRS Type: {{this_variable.irs_type }}</p>
-<p class="lead">Form: {{this_variable.parent_sked }}</p>
-<p class="lead">Part: {{this_variable.parent_sked_part }}</p>
-<p class="lead">Line number: {{this_variable.line_number }}</p>
-<p class="lead">Description: {{this_variable.description }}</p>
 
+<div class="top_matter">
+<ol class="breadcrumb">
+  <li class="breadcrumb-item"><a href="/metadata/forms.html">Forms</a></li>
+  <li class="breadcrumb-item"><a href="/metadata/forms.html#{{this_variable.parent_sked }}">{{this_variable.parent_sked }}</a></li>
+  <li class="breadcrumb-item"><a href="/metadata/parts/{{ this_variable.parent_sked_part }}.html">{{this_variable.parent_sked_part }}</a></li>
+  {% if this_variable.in_a_group %}
+  <li class="breadcrumb-item">Repeating Group: <a href="/metadata/groups/{{ this_variable.db_table }}.html">{{this_variable.db_table }}</a></li>
 
-<p class="lead">Repeating: {{this_variable.in_a_group }}</p>
-<p class="lead">versions: {{this_variable.versions }}</p>
+  {% endif %}
+  <li class="breadcrumb-item active">Xpath Details: {{this_variable.xpath }}</li>
+</ol>
+<p class="h2 ">Xpath: {{this_variable.xpath }}</p>
+</div>
+<div>
+<p class="h3 ">DB Table: <a href="{% if this_variable.in_a_group %}/metadata/groups/{{this_variable.db_table}}{% else %}/metadata/parts/{{this_variable.db_table}}{% endif %}.html">{{ this_variable.db_table }}</a></p>
+<p class="h3 ">DB Name: <strong><a href="/metadata/variable/{{this_variable.db_table}}-{{this_variable.db_name}}.html">{{this_variable.db_name }}</a></strong></p>
+
+<p class="lead ">Line number: {{this_variable.line_number }}</p>
+<p class="lead ">Description: {{this_variable.description }}</p>
+<p class="lead ">IRS Type: {{this_variable.irs_type }}</p>
+<p class="lead ">Repeating: {{this_variable.in_a_group }}</p>
+<p class="lead ">versions: {{this_variable.versions }}</p>
 
 {% if line_numbers %}
-<p class="h3">Multiple line numbers:</p>
+<p class="h3 ">Line numbers:</p>
 {% for line_number in line_numbers %}
-<p class="lead">Line number: {{line_number.line_number }}</p>
-<p class="lead">Versions: {{line_number.versions }}</p>
+<p class="lead indent2">Line number: {{line_number.line_number }}</p>
+<p class="lead indent2">Versions: {{line_number.versions }}</p>
 <br>
 {% endfor %}
 {% endif %}
 
 {% if descriptions %}
-<p class="h3">Multiple descriptions</p>
+<p class="h3 ">Descriptions</p>
 {% for description in descriptions %}
-<p class="lead">Description: {{description.description }}</p>
-<p class="lead">Versions: {{description.versions }}</p>
+<p class="lead indent2">Description: {{description.description }}</p>
+<p class="lead indent2">Versions: {{description.versions }}</p>
 <br>
 {% endfor %}
 {% endif %}

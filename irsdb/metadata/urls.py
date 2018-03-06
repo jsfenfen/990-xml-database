@@ -19,13 +19,12 @@ from metadata import views
 
 
 urlpatterns = [
-    re_path(r'xpath(?P<xpath>.+)\/+', views.show_xpath),
-    #re_path(r'form/(?P<form>[\w\d]+)\/$', views.show_form),
-    path(r'forms/', views.show_forms),
-    re_path(r'parts/(?P<part>[\w\d]+)\/$', views.show_part),
-    re_path(r'groups/(?P<parent_sked>[\w\d]+)/(?P<group>[\w\d]+)\/$', views.show_group),
-
-    #re_path(r'variable/(?P<variable>.+)\/+$', views.show_variable),
+    path(r'forms.html', views.show_forms),
+    path(r'about.html', views.show_about),
+    re_path(r'parts/(?P<part>[\w\d]+).html$', views.show_part),
+    re_path(r'groups/(?P<group>[\w\d]+).html$', views.show_group),
+    re_path(r'xpath/(?P<xpath>.+).html', views.show_xpath),
+    re_path(r'variable/(?P<db_name>[\w\d\_]+)\-(?P<variable_name>[\w\d]+).html$', views.show_variable),
 
 ]
 

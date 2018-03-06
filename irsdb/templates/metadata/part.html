@@ -1,18 +1,36 @@
 {% extends "base.html" %}
+{% load xpath_url %}
 
-
-{% block title %}{{this_part.parent_sked }}: {{ this_part.part_name}}{% endblock %}
+{% block title %}Form Part Details: {{this_part.parent_sked }} {{ this_part.part_name}}{% endblock %}
 
 {% block content %}
-<p class="h1"> <a href="/metadata/forms/#{{this_part.parent_sked }}">{{this_part.parent_sked }}</a>: {{ this_part.part_name}}</p>
-
+<div class="top_matter">
+<ol class="breadcrumb">
+  <li class="breadcrumb-item"><a href="/metadata/forms.html">Forms</a></li>
+  <li class="breadcrumb-item"><a href="/metadata/forms.html#{{this_part.parent_sked }}">{{this_part.parent_sked }}</a></li>
+  <li class="breadcrumb-item active">Form Part Details: {{ this_part.part_name}}</li>
+</ol>
+<p class="h2"> Form {{this_part.parent_sked }}: {{ this_part.part_name}}</p>
+</div>
+{% if related_groups %}
+<p class="h4">Repeating groups from this part: 
+{% for group in related_groups %}
+<a href="{{ group.get_absolute_url }}">{{ group.db_name }}</a>{% if forloop.last %}{% else %}, {% endif %}
+{% endfor %}
+{% endif %}
+{% if variables %}
     {% for variable in variables %}
-    <p class="h3">{{variable.db_name}}</p>
-        <p class="lead">Line Number: {{variable.line_number}}
+    <div class="{% cycle 'not' 'emphasized' %}">
+        <p class="h3 indent1">Variable Name: <a href="{{ variable.get_absolute_url }}">{{variable.db_name}}</a></p>
+        <p class="lead indent2">Variable Table: {{ this_part.parent_sked_part }} [ Schedule Part ] {# This is confusing, but the table *is* the parts's db_name #}
+            <br>Line Number: {{variable.line_number}}
             <br>Description: {{variable.description}}  
             <br>Type: {{variable.db_type}}
-            <br>Canonical Xpath: {{variable.xpath}}
+            <br>Xpath: <a href="{{ variable.xpath|xpath_url }}">{{variable.xpath}}</a> 
         </p>
+    </div>
     {% endfor %}
-
+{% else %}
+<p>There are non-repeating variables in this part--most likely they are contained in a repeating group.</p>
+{% endif %}
 {% endblock  %}

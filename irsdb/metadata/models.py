@@ -22,6 +22,9 @@ class Variable(IRSxBase):
     is_canonical = models.NullBooleanField(help_text="", default=False) 
     canonical_version = models.CharField(max_length=16, blank=True, null=True, help_text="canonical_version", editable=False)
 
+    def get_absolute_url(self):
+        return ("/metadata/variable/%s-%s.html" % (self.db_table, self.db_name))
+
 class Group(IRSxBase):
     db_name = models.CharField(max_length=63, blank=True, null=True, help_text="DB name", editable=False) 
     line_number = models.CharField(max_length=255, blank=True, null=True, help_text="IRS-supplied line numbers. Missing for returnheaders", editable=False) 
@@ -30,7 +33,7 @@ class Group(IRSxBase):
     versions = models.TextField(help_text="IRS-supplied description, from .xsd. ")
 
     def get_absolute_url(self):
-        return ("/metadata/groups/%s" % self.db_name)
+        return ("/metadata/groups/%s.html" % self.db_name)
 
 class SchedulePart(IRSxBase):
     part_name = models.CharField(max_length=255, blank=True, null=True, help_text="Part Name.", editable=False) 
@@ -38,7 +41,7 @@ class SchedulePart(IRSxBase):
     is_shell = models.NullBooleanField(help_text="", default=False) 
 
     def get_absolute_url(self):
-        return ("/metadata/parts/%s" % self.parent_sked_part)
+        return ("/metadata/parts/%s.html" % self.parent_sked_part)
 
 
 # For historic reference to precise line_numbers, descriptions

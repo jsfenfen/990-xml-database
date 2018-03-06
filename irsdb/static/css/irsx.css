@@ -8,15 +8,15 @@ body {
 }
 
 .indent1 {
-    padding-left: 15px;
-}
-
-.indent2 {
     padding-left: 30px;
 }
 
+.indent2 {
+    padding-left: 60px;
+}
+
 .indent3 {
-    padding-left: 45px;
+    padding-left: 90px;
 }
 
 .anchor {
@@ -24,3 +24,20 @@ body {
     padding-top:50px;
     margin-top:-50px;
  }
+
+ span.glyphicon-question-sign {
+    font-size: 20px;
+    padding: 0px;
+    margin: 0px;
+}
+
+.top_matter {
+    border-bottom: 2px solid #DDD;
+    margin-bottom: 10px;
+}
+
+.emphasized {
+    background-color: #F5F5F5;
+    padding: 5px;
+    margin: 0px;
+}

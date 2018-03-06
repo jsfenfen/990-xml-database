@@ -1,11 +1,14 @@
 {% extends "base.html" %}
 
+{% block forms_active %}class="active"{% endblock %}
 
 {% block title %}Show all forms{% endblock %}
 
 {% block content %}
-<p class="h1">Forms</p>
-<p class="lead">Showing forms processed by IRSx for schema years 2013-2016</p>
+<div class="top_matter">
+<p class="h2">Form Index</p>
+</div>
+<p class="lead">The listing of form parts and repeating groups below describes the consistent structure and naming convention <a href="https://github.com/jsfenfen/990-xml-reader/">IRSx</a> uses to represent nonprofit tax filings. Click on a form part or a repeating group named below to see the invidividual line items, their database table and names, and the line number and description given to them in the IRS' metadata. For more, see the <a href="/metadata/about.html">about</a> page.</p>
 <p>Jump to: Header/<a href="#ReturnHeader990x">ReturnHeader990x</a> Forms <a href="#IRS990">990</a> <a href="#IRS990EZ">990EZ</a> <a href="#IRS990PF">990PF</a> Lettered Schedules: <a href="#IRS990ScheduleA">A</a>, <a href="#IRS990ScheduleB">B</a>, <a href="#IRS990ScheduleC">C</a>, <a href="#IRS990ScheduleD">D</a>, <a href="#IRS990ScheduleE">E</a>, <a href="#IRS990ScheduleF">F</a>, <a href="#IRS990ScheduleG">G</a>, <a href="#IRS990ScheduleH">H</a>, <a href="#IRS990ScheduleI">I</a>, <a href="#IRS990ScheduleJ">J</a>, <a href="#IRS990ScheduleK">K</a>, <a href="#IRS990ScheduleL">L</a>, <a href="#IRS990ScheduleM">M</a>, <a href="#IRS990ScheduleN">N</a>, <a href="#IRS990ScheduleO">O</a>, <a href="#IRS990ScheduleR">R</a></p>
 
 {% for form in forms %}
@@ -13,10 +16,12 @@
 <div>
 <p class="h2">{{form.sked_name}}</p>
 {% for part in form.parts %}
-<p class="h4 indent2"><a href="{{ part.part.get_absolute_url }}">{{ part.part.part_name }}</a></p>
+<div class="{% cycle 'not' 'emphasized' %}">
+<p class="h3 indent1"><a href="{{ part.part.get_absolute_url }}">{{ part.part.part_name }}</a></p>
 {% for group in part.groups %}
-<p class="h5 indent3">Repeating group: <a href="/metadata/groups/{{form.sked_name}}/{{group}}/">{{ group }}</a></p>
+<p class="h4 indent2">Repeating group: <a href="/metadata/groups/{{group}}.html">{{ group }}</a></p>
 {% endfor %}
+</div>
 {% endfor %}
 </div>
 {% endfor %}

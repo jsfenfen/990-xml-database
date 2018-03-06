@@ -1,16 +1,29 @@
 {% extends "base.html" %}
+{% load xpath_url %}
 
 
 {% block title %}{{this_group.parent_sked }}: {{ this_group.db_name}}{% endblock %}
 
 {% block content %}
-<p class="h1"> <a href="/metadata/forms/#{{this_group.parent_sked }}">{{this_group.parent_sked }}</a>: {{ this_group.db_name}}</p>
+<div class="top_matter">
+<ol class="breadcrumb">
+  <li class="breadcrumb-item"><a href="/metadata/forms.html">Forms</a></li>
+  <li class="breadcrumb-item"><a href="/metadata/forms.html#{{this_group.parent_sked }}">{{this_group.parent_sked }}</a></li>
+  <li class="breadcrumb-item"><a href="/metadata/parts/{{this_group.parent_sked_part }}.html">{{ this_group.parent_sked_part }}</a></li>
+  <li class="breadcrumb-item active">Repeating Group Details: {{  this_group.db_name}}</li>
+</ol>
+<p class="h2">Repeating Group {{ this_group.db_name}} </p>
+</div>
     {% for variable in variables %}
-    <p class="h3">{{variable.db_name}}</p>
-        <p class="lead">Line Number: {{variable.line_number}}
+    <div class="{% cycle 'not' 'emphasized' %}">
+    <p class="h3 indent1">Variable Name: <a href="{{ variable.get_absolute_url }}">{{variable.db_name}}</a></p>
+
+        <p class="lead indent2">Variable Table: {{  this_group.db_name}} [ Repeating Group - {{this_group.parent_sked }}] {# This is confusing, but the table *is* the group's db_name #}
+            <br>Line Number: {{variable.line_number}}
             <br>Description: {{variable.description}}  
             <br>Type: {{variable.db_type}}
-            <br>Canonical Xpath: {{variable.xpath}}
+            <br>Xpath: <a href="{{ variable.xpath|xpath_url }}">{{variable.xpath}}</a> 
         </p>
+    </div>
     {% endfor %}
 {% endblock  %}
