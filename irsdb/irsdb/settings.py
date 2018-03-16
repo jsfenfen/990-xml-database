@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'metadata',
     'filing',
+    'return',
 
 ]
 
@@ -128,6 +129,8 @@ STATICFILES_DIRS = [
 
 # will break without irsx
 from irsx.settings import METADATA_DIRECTORY, KNOWN_SCHEDULES
+
+GENERATED_MODELS_DIR = os.path.join(BASE_DIR, "generated_schemas")
 
 try:
     from .local_settings import *

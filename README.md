@@ -11,16 +11,29 @@ Django app to consume and store 990 data and metadata. Depends on [IRSx](https:/
 
 #### Adding the metadata
 
-4. run `python manage.py makemigrations metadata` to generate the metadata migrations, and then run them with `python manage.py migrate metadata`.
+1. run `python manage.py makemigrations metadata` to generate the metadata migrations, and then run them with `python manage.py migrate metadata`.
 
-5. Load the metadata with the management command: `python manage.py load_metadata`. This command erases the metadata before loading, so it can be rerun if it somehow breaks in the middle.
+2. Load the metadata with the management command: `python manage.py load_metadata`. This command erases the metadata before loading, so it can be rerun if it somehow breaks in the middle.
 
 #### Adding index file data 
 
-5.  run `python manage.py makemigrations filing` to generate the filing migrations, and then run them with `python manage.py migrate filing`.
+1.  run `python manage.py makemigrations filing` to generate the filing migrations, and then run them with `python manage.py migrate filing`.
 
-6. Run `$ python manage.py enter\_yearly\_submissions \<YYYY\>` where YYYY is a the year corresponding to a yearly index file that has already been downloaded. { If it hasn't been downloaded you can retrieve it with irsx_index --year=YYYY } 
+2. Run `$ python manage.py enter_yearly_submissions <YYYY>` where YYYY is a the year corresponding to a yearly index file that has already been downloaded. { If it hasn't been downloaded you can retrieve it with irsx_index --year=YYYY } 
 
 __Notes__ 
 
-- enter\_yearly\_submissions: This is a management command that checks if the contents of the index files have been loaded previously, and only adds them if they haven't, so it can be rerun. It's not incredibly efficient though (it checks if each exists before deciding whether to load, although loading is done in bulk). It could be made to run faster if it stored a hash of known annual filings in memory while it ran, t
+- enter\_yearly\_submissions checks if the contents of the index files have been loaded previously, and only adds them if they haven't, so it can be rerun. It's not incredibly efficient though (it checks if each exists before deciding whether to load, although loading is done in bulk). It could be made to run faster if it stored a hash of known annual filings in memory while it ran, though at a cost of having to hold all the object ids in memory at the time. Meh. 
+
+#### Generate the schema files - Not required
+
+Run `$ python manage.py generate_schemas_from_metadata` to generate a django models file (to the directory generated_models). You can modify these and put them into return/models.
+
+#### Create the return tables
+
+This is just another migration, but it creates 180 tables. Django seems to spit out a lotta warnings, they don't seem to reflect actual problems? 
+`$ python manage.py makemigrations return`
+To make the migrations and   
+`$ python manage.py migrate return`
+to run them.
+
