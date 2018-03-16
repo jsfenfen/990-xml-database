@@ -1,5 +1,3 @@
-## Adapted from the Chronicle of Philanthropy / Education's model_accumulator
-
 from django.apps import apps
 from django.forms import model_to_dict
 
