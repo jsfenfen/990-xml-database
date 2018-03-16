@@ -31,8 +31,9 @@ Run `$ python manage.py generate_schemas_from_metadata` to generate a django mod
 
 #### Create the return tables
 
-This is just another migration, but it creates a few hundred tables. Give it a minute. 
+This is just another migration, but it creates 180 tables. Django seems to spit out a lotta warnings, they don't seem to reflect actual problems? 
 `$ python manage.py makemigrations return`
-Then:   
+To make the migrations and   
 `$ python manage.py migrate return`
+to run them.
 
