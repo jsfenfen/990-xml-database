@@ -7,9 +7,16 @@ Django app to consume and store 990 data and metadata. Depends on [irsx](https:/
 
 2. install the requirements with `pip install -r requirements.txt`. This is Django 2, so only python3 is supported.
 
-3. copy the irsdb\/local\_settings.py-example file to irsdb\/local_settings.py and edit it to reflect your database settings.
+3. copy the irsdb/local\_settings.py-example file to irsdb\/local_settings.py and edit it to reflect your database settings.
+
+#### Adding the metadata
 
 4. run `python manage.py makemigrations metadata` to generate the metadata migrations, and then run them with `python manage.py migrate metadata`.
 
 5. Load the metadata with the management command: `python manage.py load_metadata`. This command erases the metadata before loading, so it can be rerun if it somehow breaks in the middle.
 
+#### Adding index file data 
+
+5.  run `python manage.py makemigrations filing` to generate the filing migrations, and then run them with `python manage.py migrate filing`.
+
+6. Run python manage.py enter\_yearly\_submissions <YYYY> where YYYY is an index file that has already been downloaded. This is a management command that checks if the contents of the index files have been loaded previously, and only adds them if they haven't. If it hasn't been downloaded you can retrieve it with irsx_index --year=YYYY . 
