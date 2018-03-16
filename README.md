@@ -19,4 +19,4 @@ Django app to consume and store 990 data and metadata. Depends on [IRSx](https:/
 
 5.  run `python manage.py makemigrations filing` to generate the filing migrations, and then run them with `python manage.py migrate filing`.
 
-6. Run python manage.py enter\_yearly\_submissions <YYYY> where YYYY is an index file that has already been downloaded. This is a management command that checks if the contents of the index files have been loaded previously, and only adds them if they haven't. If it hasn't been downloaded you can retrieve it with irsx_index --year=YYYY . 
+6. Run python manage.py enter\_yearly\_submissions \<YYYY\> where YYYY is an index file that has already been downloaded. This is a management command that checks if the contents of the index files have been loaded previously, and only adds them if they haven't. If it hasn't been downloaded you can retrieve it with irsx_index --year=YYYY . 
