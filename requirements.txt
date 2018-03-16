@@ -6,4 +6,6 @@ psycopg2
 
 # 
 irsx
+requests
 unidecode
+
