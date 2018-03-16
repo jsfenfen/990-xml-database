@@ -3,7 +3,7 @@ import os
 import requests
 
 from django.core.management.base import BaseCommand
-from ....filing.models import Filing
+from filing.models import Filing
 from django.conf import settings
 from irsx.settings import INDEX_DIRECTORY
 from irsx.file_utils import stream_download
