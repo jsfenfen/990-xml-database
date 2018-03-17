@@ -97,7 +97,7 @@ class Command(BaseCommand):
             Filing.objects.filter(object_id__in=object_id_list).update(parse_started=True)
 
             for filing in filings:
-                #print("Handling id %s" % filing.object_id)
+                print("Handling id %s" % filing.object_id)
                 self.run_filing(filing)
                 process_count += 1
 

@@ -36,6 +36,12 @@ class Accumulator(object):
 
 
     def _get_model(self, model_name, appname='return'):
+
+        # trying to track this down, this is happening with a 2017 filing, not sure which one?
+        if not model_name:
+            raise RuntimeError("Model name is missing !!!")
+
+
         # cache locally so django doesn't try to hit the db every time
         try:
             return self.model_cache[appname + model_name]
