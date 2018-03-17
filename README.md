@@ -59,7 +59,11 @@ TK - explanation of keyerrors
 
 #### Removing all rows
 
-There's a sql script that will remove all entered rows from all return tables and reset the fields in filing as if they were new. 
+There's a [sql script](https://github.com/jsfenfen/990-xml-database/blob/master/irsdb/return/sql/delete_all_return.sql) that will remove all entered rows from all return tables and reset the fields in filing as if they were new. 
+
+If you want to live dangerously, you can run it from the console like this:
+
+`$ python manage.py dbshell < ./return/sql/delete_all_return.sql`
 
 
 #### Removing a subset of all rows
