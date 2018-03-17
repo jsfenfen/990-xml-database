@@ -2,21 +2,20 @@ import csv
 import os
 import requests
 
-from django.core.management.base import BaseCommand
-from filing.models import Filing
-from django.conf import settings
 from datetime import datetime
 
+from django.core.management.base import BaseCommand
+from django.conf import settings
+
+from filing.models import Filing
+from schemas.model_accumulator import Accumulator
 from irsx.settings import INDEX_DIRECTORY
 from irsx.file_utils import stream_download
 from irsx.xmlrunner import XMLRunner
 
-from schemas.model_accumulator import Accumulator
-
-
 # this is how many we process; there's a separate batch size
 # in model accumulator for how many are processed
-BATCH_SIZE = 200
+BATCH_SIZE = 100
 
 
 class Command(BaseCommand):
@@ -38,7 +37,7 @@ class Command(BaseCommand):
 
     def process_sked(self, sked):
         """ Enter just one schedule """ 
-        print("Processing schedule %s" % sked['schedule_name'])
+        #print("Processing schedule %s" % sked['schedule_name'])
         for part in sked['schedule_parts'].keys():
             partname = part
             partdata = sked['schedule_parts'][part]
@@ -60,7 +59,7 @@ class Command(BaseCommand):
             return None
         
         schedule_list = parsed_filing.list_schedules()
-        print("sked list is %s" % schedule_list)
+        #print("sked list is %s" % schedule_list)
 
         result = parsed_filing.get_result()
             
@@ -70,7 +69,7 @@ class Command(BaseCommand):
             # If we find keyerrors--xpaths that are missing from our spec, note it
             filing.error_details = str(keyerrors)
             filing.key_error_count = len(keyerrors)
-            filing.has_keyerrors = has_keyerrors
+            filing.is_error = has_keyerrors
             filing.save()
 
         for sked in result:
@@ -78,15 +77,16 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
-        self.setup()
-        print("options are %s" % options)
+
         year = int(options['year'][0])
         if year not in [2014, 2015, 2016, 2017, 2018]:
             raise RuntimeError("Illegal year `%s`. Please enter a year between 2014 and 2018" % year)
+        
+        print("Running filings during year %s" % year)
+        self.setup()
 
-
+        process_count = 0
         while True:
-                
             filings=Filing.objects.filter(submission_year=year).exclude(parse_complete=True)[:100]
             if not filings:
                 break
@@ -97,13 +97,12 @@ class Command(BaseCommand):
             Filing.objects.filter(object_id__in=object_id_list).update(parse_started=True)
 
             for filing in filings:
-                print("Handling id %s" % filing.object_id)
+                #print("Handling id %s" % filing.object_id)
                 self.run_filing(filing)
+                process_count += 1
 
-
+            # commit anything that's left
             self.accumulator.commit_all()
             # record that all are complete
             Filing.objects.filter(object_id__in=object_id_list).update(process_time=datetime.now(), parse_complete=True)
-
-            # end after one cycle:
-            assert False
+            print("Processed a total of %s filings" % process_count)
