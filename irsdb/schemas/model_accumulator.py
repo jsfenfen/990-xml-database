@@ -2,9 +2,9 @@ from django.apps import apps
 from django.forms import model_to_dict
 
 # Setting too big will create memory problems
-BATCH_SIZE = 500
+BATCH_SIZE = 100
 VERBOSE = False
-APPNAME = 'returndata'
+APPNAME = 'return'
 listtype = type([])
 # TODO: allow appname to be passed as an argument. 
 
@@ -32,10 +32,10 @@ class Accumulator(object):
 
                 if dict[key]=='RESTRICTED':
                     # These are numeric fields, don't try to save 'RESTRICTED'
-                    del(dict[key])
+                    dict[key]=0
 
 
-    def _get_model(self, model_name, appname='returndata'):
+    def _get_model(self, model_name, appname='return'):
         # cache locally so django doesn't try to hit the db every time
         try:
             return self.model_cache[appname + model_name]
@@ -47,9 +47,10 @@ class Accumulator(object):
         if self.model_dict[model_name]:
             this_model = self._get_model(model_name)
             if (VERBOSE):
-                print "Committing %s objects for key %s" % (
+                print("Committing %s objects for key %s" % (
                     len(self.model_dict[model_name]),
                     model_name
+                    )
                 )
             this_model.objects.bulk_create(self.model_dict[model_name])
 

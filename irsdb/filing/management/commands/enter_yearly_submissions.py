@@ -20,22 +20,28 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         # Positional arguments
         parser.add_argument('year', nargs='+', type=int)
+        parser.add_argument('--download', action='store_true') # force download
+        parser.add_argument('--enter', action='store_true') # force it to enter
+
 
     def handle(self, *args, **options):
         for year in options['year']:
-            irs_file_url = 'https://s3.amazonaws.com/irs-form-990/index_' + year + '.csv'
-            response = requests.head(irs_file_url)
+            irs_file_url = 'https://s3.amazonaws.com/irs-form-990/index_%s.csv' % year
+            irs_file_len = 0
 
-            if response.status_code == 404:
-                print('index_%s.csv is not available for download.' % year)
-                continue
-            else:
-                irs_file_len = int(response.headers['Content-Length'])
+            force_download = options['download']
+            if not force_download:
+                response = requests.head(irs_file_url)
+                if response.status_code == 404:
+                    print('index_%s.csv is not available for download.' % year)
+                    continue
+                else:
+                    irs_file_len = int(response.headers['Content-Length'])
 
-            local_file_path = os.path.join(INDEX_DIRECTORY, "index_%s.csv" % year)
+                local_file_path = os.path.join(INDEX_DIRECTORY, "index_%s.csv" % year)
 
             # Verify index file has been downloaded.
-            if not os.path.isfile(local_file_path):
+            if not os.path.isfile(local_file_path) or force_download:
                 print('Downloading index_%s.csv...' % year)
                 stream_download(irs_file_url, local_file_path)
                 print('Done!')
@@ -43,7 +49,8 @@ class Command(BaseCommand):
             local_file_len = os.path.getsize(local_file_path)
             if irs_file_len == local_file_len:
                 print('File index_%s.csv has not changed since the last download.' % year)
-                continue
+                if not options['enter']:
+                    continue
             else:
                 print('index_%s.csv has changed. Downloading updated file...' % year)
                 stream_download(irs_file_url, local_file_path)

@@ -132,6 +132,12 @@ from irsx.settings import METADATA_DIRECTORY, KNOWN_SCHEDULES
 
 GENERATED_MODELS_DIR = os.path.join(BASE_DIR, "generated_schemas")
 
+# suppress verbose complaints until we can figure if anythings actually wrong
+import warnings
+warnings.simplefilter(action='ignore', category=RuntimeWarning)
+
+
+
 try:
     from .local_settings import *
 except ImportError as e:
