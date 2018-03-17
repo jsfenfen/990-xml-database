@@ -28,7 +28,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         # Positional arguments
-        parser.add_argument('year', nargs='+', type=int)
+        parser.add_argument('year', nargs=1, type=int)
 
     def setup(self):
         # get an XMLRunner -- this is what actually does the parsing
@@ -63,13 +63,15 @@ class Command(BaseCommand):
         print("sked list is %s" % schedule_list)
 
         result = parsed_filing.get_result()
+            
         keyerrors = parsed_filing.get_keyerrors()
         has_keyerrors = len(keyerrors) > 0
         if has_keyerrors:
-            filing.has_keyerrors = True
+            # If we find keyerrors--xpaths that are missing from our spec, note it
             filing.error_details = str(keyerrors)
+            filing.key_error_count = len(keyerrors)
+            filing.has_keyerrors = has_keyerrors
             filing.save()
-            
 
         for sked in result:
             self.process_sked(sked)
@@ -78,10 +80,14 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.setup()
         print("options are %s" % options)
+        year = int(options['year'][0])
+        if year not in [2014, 2015, 2016, 2017, 2018]:
+            raise RuntimeError("Illegal year `%s`. Please enter a year between 2014 and 2018" % year)
+
 
         while True:
                 
-            filings=Filing.objects.all().exclude(parse_complete=True)[:100]
+            filings=Filing.objects.filter(submission_year=year).exclude(parse_complete=True)[:100]
             if not filings:
                 break
 
@@ -92,18 +98,12 @@ class Command(BaseCommand):
 
             for filing in filings:
                 print("Handling id %s" % filing.object_id)
-                parsed_filing = self.run_filing(filing)
-                keyerrors = parsedFiling.get_keyerrors()
-                has_keyerrors = len(keyerrors) > 0
-                if has_keyerrors:
-                    # If we find keyerrors--xpaths that are missing from our spec, note it
-                    filing.error_details = str(keyerrors)
-                    filing.key_error_count = len(keyerrors)
-                    filing.has_keyerrors = has_keyerrors
-                    filing.save()
+                self.run_filing(filing)
 
 
             self.accumulator.commit_all()
             # record that all are complete
             Filing.objects.filter(object_id__in=object_id_list).update(process_time=datetime.now(), parse_complete=True)
 
+            # end after one cycle:
+            assert False
