@@ -4,9 +4,11 @@ from django.forms import model_to_dict
 # Setting too big will create memory problems
 BATCH_SIZE = 100
 VERBOSE = False
-APPNAME = 'return'
-listtype = type([])
+
 # TODO: allow appname to be passed as an argument. 
+APPNAME = 'return'
+
+listtype = type([])
 
 class Accumulator(object):
 
@@ -17,7 +19,9 @@ class Accumulator(object):
         # self.model_dict{model_name: [modeldictionary1, modeldictionary2,]...}
 
     def _clean_restricted(self, dict):
-        """ Might only be needed for schedule B, check this """ 
+        """ RESTRICTED is only sked b, SSN's appear in a variety of places
+            we could do a better job of restricting this
+        """ 
         for key in dict.keys():
             if type(dict[key])==listtype:
                 print("\n\n***list found %s" % (key))
@@ -36,8 +40,6 @@ class Accumulator(object):
 
 
     def _get_model(self, model_name, appname='return'):
-
-
         # cache locally so django doesn't try to hit the db every time
         try:
             return self.model_cache[appname + model_name]
@@ -60,18 +62,14 @@ class Accumulator(object):
             self.model_dict[model_name] = []
 
     def add_model(self, model_name, model_dict):
-
-        # trying to track this down, this is happening with a 2017 filing, not sure which one?
+        # An artifact upstream is creating empty rows, with no name and only an ein and object_id
+        # This is probably related to the 'empty head' rows in variables.csv, which will be excised by loading this db and analyzing
         if not model_name:
-            #raise RuntimeError("Model name is missing !!!")
             print("###Model name is missing in object_id %s\ndict=%s!!!" % (model_dict['object_id'], model_dict))
             return
-
         this_model = self._get_model(model_name)
-
         self._clean_restricted(model_dict)
         model_instance = this_model(**model_dict)
-
         try:
             self.model_dict[model_name].append(model_instance)
 
