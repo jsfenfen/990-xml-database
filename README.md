@@ -19,11 +19,7 @@ Django app to consume and store 990 data and metadata. Depends on [IRSx](https:/
 
 1.  run `python manage.py makemigrations filing` to generate the filing migrations, and then run them with `python manage.py migrate filing`.
 
-2. Run `$ python manage.py enter_yearly_submissions <YYYY>` where YYYY is a the year corresponding to a yearly index file that has already been downloaded. { If it hasn't been downloaded you can retrieve it with irsx_index --year=YYYY } 
-
-__Notes__ 
-
-- enter\_yearly\_submissions checks if the contents of the index files have been loaded previously, and only adds them if they haven't, so it can be rerun. It's not incredibly efficient though (it checks if each exists before deciding whether to load, although loading is done in bulk). It could be made to run faster if it stored a hash of known annual filings in memory while it ran, though at a cost of having to hold all the object ids in memory at the time. Meh. 
+2. Run `$ python manage.py enter_yearly_submissions <YYYY>` where YYYY is a the year corresponding to a yearly index file that has already been downloaded. { If it hasn't been downloaded you can retrieve it with irsx_index --year=YYYY }. This script checks to see if the IRS' index file is any bigger than the one one disk, and only runs if it has. You can force it to try to enter any new filings (regardless of whether the file is updated) with the `--enter` option.
 
 #### Generate the schema files - Not required
 
@@ -37,3 +33,54 @@ To make the migrations and
 `$ python manage.py migrate return`
 to run them.
 
+#### Load the filings
+
+Actually enter the filings into the database with 
+`$ python manage.py load_filings <YYYY>`. 
+
+This script will take a while to run--probably at least several hours per year. You'll likely want to run it using nohup, so something like this:
+
+
+`$ nohup python manage.py load_filings <YYYY> &`
+
+Which detaches the terminal from the process, so if your connection times out the command keeps running.
+
+You may want to adjust your postgres settings for better loading, but you'll need to pay attention to overall memory and resource uses. 
+
+
+
+
+#### Analyze the load process
+
+The loading process uses columns in the filing model to track load process (and to insure the same files aren't loaded twice). 
+
+TK - explanation of keyerrors
+
+
+#### Removing all rows
+
+There's a sql script that will remove all entered rows from all return tables and reset the fields in filing as if they were new. 
+
+
+#### Removing a subset of all rows
+
+TK - how to remove all rows for filings where parse_started = True and parse_complete = False.
+
+#### File size concerns
+
+The full download of uncompressed .xml files is over ~74 gigabytes. Processing a complete year of data probably entails moving at least 15 gigs of xml. 
+
+You probably want to look into a tool to help you move these files in bulk. AWS' S3 CLI can dramatically reduce download time, but seems unhelpful when trying to pull a subset of files (it seems like [--exclude '*'](https://docs.aws.amazon.com/cli/latest/reference/s3/index.html#use-of-exclude-and-include-filters) hangs when processing so many files). You may want to look into moving all the files to your own S3 bucket as well. There are also alternatives to AWS' CLI tool, like [S3 CMD](http://s3tools.org/s3cmd).
+
+You'll also want to [set IRSx](linkTK) [link tk] to look for the xml files in whatever directory you downloaded them to.
+
+The worst option is to download the uncompressed files one at a time. That sounds, really, really slow. 
+
+
+#### Server considerations
+
+With most hosting providers, you'll need to configure additional storage to support the static files and the database that's ultimately loaded. Make sure that you set the database storage directory to *that storage*, and get the fastest storage type you can afford.
+
+You may want to look into tuning your database parameters to better support data loading. And you'll get better performance if you only create indexes after loading is complete (and delete them before bulk loads take place).
+
+One random datapoint: on an Amazon t2.medium ec2 server (~$38/month) with 150 gigs of additional storage and postgres running on the default configs and writing to an SSD EBS volume, load time for the complete set of about 490,000 filings from 2017 took about 3 hours.
