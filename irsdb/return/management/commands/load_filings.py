@@ -66,9 +66,12 @@ class Command(BaseCommand):
         result = parsed_filing.get_result()
             
         keyerrors = parsed_filing.get_keyerrors()
-        has_keyerrors = len(keyerrors) > 0
-        if has_keyerrors:
+        
+        if keyerrors:
             # If we find keyerrors--xpaths that are missing from our spec, note it
+            print("Key error %s")
+            has_keyerrors = len(keyerrors) > 0
+            print("keyerror: %s" % keyerrors)
             filing.error_details = str(keyerrors)
             filing.key_error_count = len(keyerrors)
             filing.is_error = has_keyerrors
