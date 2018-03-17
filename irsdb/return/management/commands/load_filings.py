@@ -41,11 +41,13 @@ class Command(BaseCommand):
         for part in sked['schedule_parts'].keys():
             partname = part
             partdata = sked['schedule_parts'][part]
-            #print(partname, partdata)
+            #print("part %s %s" % (partname, partdata))
+
             self.accumulator.add_model(partname, partdata)
 
         for groupname in sked['groups'].keys():
             for groupdata in sked['groups'][groupname]:
+                #print("group %s %s" % (groupname, groupdata) )
                 self.accumulator.add_model(groupname, groupdata)
 
 
@@ -89,6 +91,7 @@ class Command(BaseCommand):
         while True:
             filings=Filing.objects.filter(submission_year=year).exclude(parse_complete=True)[:100]
             if not filings:
+                print("Done")
                 break
 
             object_id_list = [f.object_id for f in filings]
@@ -97,9 +100,11 @@ class Command(BaseCommand):
             Filing.objects.filter(object_id__in=object_id_list).update(parse_started=True)
 
             for filing in filings:
-                print("Handling id %s" % filing.object_id)
+                #print("Handling id %s" % filing.object_id)
                 self.run_filing(filing)
                 process_count += 1
+                if process_count % 1000 == 0:
+                    print("Handled %s filings" % process_count)
 
             # commit anything that's left
             self.accumulator.commit_all()

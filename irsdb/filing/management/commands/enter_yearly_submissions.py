@@ -30,6 +30,8 @@ class Command(BaseCommand):
             irs_file_len = 0
 
             force_download = options['download']
+            local_file_path = os.path.join(INDEX_DIRECTORY, "index_%s.csv" % year)
+
             if not force_download:
                 response = requests.head(irs_file_url)
                 if response.status_code == 404:
@@ -38,7 +40,6 @@ class Command(BaseCommand):
                 else:
                     irs_file_len = int(response.headers['Content-Length'])
 
-                local_file_path = os.path.join(INDEX_DIRECTORY, "index_%s.csv" % year)
 
             # Verify index file has been downloaded.
             if not os.path.isfile(local_file_path) or force_download:
