@@ -76,6 +76,12 @@ There are management commands to create or drop indexes on object\_id, ein and (
 
 You can remove all filings from a given index file with the [remove_year](https://github.com/jsfenfen/990-xml-database/blob/master/irsdb/return/management/commands/remove_year.py). It's likely to run faster if indexes are in place. 
 
+#### Removing only the rows that were half loaded
+
+If loading gets interrupted, you can remove only the rows where parse\_started is true and parse\_complete is not with the management command [remove\_half\_loaded](https://github.com/jsfenfen/990-xml-database/blob/master/irsdb/return/management/commands/remove_half_loaded.py). It also requires a year as a command line argument.
+ 
+ `$ python manage.py remove_half_loaded 2018`
+
 #### File size concerns
 
 The full download of uncompressed .xml files is over ~74 gigabytes. Processing a complete year of data probably entails moving at least 15 gigs of xml. 
