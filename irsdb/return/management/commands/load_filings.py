@@ -77,8 +77,11 @@ class Command(BaseCommand):
             filing.is_error = has_keyerrors
             filing.save()
 
-        for sked in result:
-            self.process_sked(sked)
+        if result:
+            for sked in result:
+                self.process_sked(sked)
+        else:
+            print("Filing not parsed %s " % object_id)
 
 
     def handle(self, *args, **options):

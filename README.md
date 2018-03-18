@@ -66,9 +66,15 @@ If you want to live dangerously, you can run it from the console like this:
 `$ python manage.py dbshell < ./return/sql/delete_all_return.sql`
 
 
+#### Adding or removing indexes
+
+There are management commands to create or drop indexes on object\_id, ein and (for schedule K) documentId. Use
+`$ python manage.py make_indexes` or 
+`$ python manage.py drop_indexes` . These are just conveniences to create indexes named xx_\<tablename\> --they won't remove other indexes.
+
 #### Removing a subset of all rows
 
-TK - how to remove all rows for filings where parse_started = True and parse_complete = False.
+You can remove all filings from a given index file with the [remove_year](https://github.com/jsfenfen/990-xml-database/blob/master/irsdb/return/management/commands/remove_year.py). It's likely to run faster if indexes are in place. 
 
 #### File size concerns
 
