@@ -23,3 +23,15 @@ class Command(BaseCommand):
                 print("Running query: '%s' " % query)
                 result = self.cursor.execute(query)
                 print("Done '%s'\n" % result )
+
+        cmds = [
+            "update filing_filing set parse_started=False where  parse_started = True and submission_year=%s" % self.submission_year,
+            "update filing_filing set parse_complete=False where parse_complete = True and submission_year=%s" % self.submission_year,
+            "update filing_filing set process_time=Null where not process_time is Null and submission_year=%s" % self.submission_year,
+            "update filing_filing set is_error=False where is_error = True and submission_year=%s" % self.submission_year,
+            "update filing_filing set key_error_count=Null where not key_error_count is Null and submission_year=%s" % self.submission_year,
+            "update filing_filing set error_details =Null where not error_details is Null and submission_year=%s" % self.submission_year]
+
+        for cmd in cmds:
+            print("Running query: '%s' " % cmd)
+            self.cursor.execute(cmd)
