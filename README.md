@@ -88,7 +88,7 @@ The full download of uncompressed .xml files is over ~74 gigabytes. Processing a
 
 You probably want to look into a tool to help you move these files in bulk. AWS' S3 CLI can dramatically reduce download time, but seems unhelpful when trying to pull a subset of files (it seems like [--exclude '*'](https://docs.aws.amazon.com/cli/latest/reference/s3/index.html#use-of-exclude-and-include-filters) hangs when processing so many files). You may want to look into moving all the files to your own S3 bucket as well. There are also alternatives to AWS' CLI tool, like [S3 CMD](http://s3tools.org/s3cmd).
 
-You'll also want to [set IRSx](linkTK) [link tk] to look for the xml files in whatever directory you downloaded them to.
+You'll also want to [configure IRSx file cache directory](https://github.com/jsfenfen/990-xml-reader/#configuring-the-file-cache-directory) with the XML_DIRECTORY to look for the xml files in whatever directory you downloaded them to.
 
 The worst option is to download the uncompressed files one at a time. That sounds, really, really slow. 
 
