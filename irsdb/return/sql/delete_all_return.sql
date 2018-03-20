@@ -1,7 +1,11 @@
-
--- Removes every entry from all of the return tables. Use with caution!
+------------
+--
+-- !! Removes every entry from all of the return tables. Use with caution !!
+-- 
 -- Also resets the tracking fields in Filing so that each starts "fresh"
--- and the loading logic in load_files works correctly.
+-- and load_files.py will try to reload these. 
+-- (If parse_complete is not reset, load_files will think it's already "done" and skip it)
+------------
 
 delete from return_cntrctrcmpnstn;
 delete from return_ez_part_0;
