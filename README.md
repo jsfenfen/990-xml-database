@@ -21,7 +21,7 @@ Django app to consume and store 990 data and metadata. Depends on [IRSx](https:/
 
 2. Run `$ python manage.py enter_yearly_submissions <YYYY>` where YYYY is a the year corresponding to a yearly index file that has already been downloaded. { If it hasn't been downloaded you can retrieve it with irsx_index --year=YYYY }. This script checks to see if the IRS' index file is any bigger than the one one disk, and only runs if it has. You can force it to try to enter any new filings (regardless of whether the file is updated) with the `--enter` option.
 
-__There's a problem with the 2014 index file.__ An internal comma has "broken" the .csv format for some time. You can fix it with a perl one liner:
+__There's a problem with the 2014 index file.__ An internal comma has "broken" the .csv format for some time. You can fix it with a perl one liner (which first backs the file up to index_2014.csv.bak before modifying it)
 
 	$ perl -i.bak -p -e 's/SILVERCREST ASSET ,AMAGEMENT/SILVERCREST ASSET MANAGEMENT/g' index_2014.csv
 
