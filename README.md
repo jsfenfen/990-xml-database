@@ -21,6 +21,20 @@ Django app to consume and store 990 data and metadata. Depends on [IRSx](https:/
 
 2. Run `$ python manage.py enter_yearly_submissions <YYYY>` where YYYY is a the year corresponding to a yearly index file that has already been downloaded. { If it hasn't been downloaded you can retrieve it with irsx_index --year=YYYY }. This script checks to see if the IRS' index file is any bigger than the one one disk, and only runs if it has. You can force it to try to enter any new filings (regardless of whether the file is updated) with the `--enter` option.
 
+__There's a problem with the 2014 index file.__ An internal comma has "broken" the .csv format for some time. You can fix it with a perl one liner:
+
+	$ perl -i.bak -p -e 's/SILVERCREST ASSET ,AMAGEMENT/SILVERCREST ASSET MANAGEMENT/g' index_2014.csv
+
+We can see that it worked by diffing it.
+
+	$ diff index_2014.csv index_2014.csv.bak
+	39569c39569
+	< 11146506,EFILE,136171217,201212,1/14/2014,MOSTYN FOUNDATION INC CO SILVERCREST ASSET MANAGEMENT,990PF,93491211007003,201302119349100700
+	---
+	> 11146506,EFILE,136171217,201212,1/14/2014,MOSTYN FOUNDATION INC CO SILVERCREST ASSET ,AMAGEMENT,990PF,93491211007003,201302119349100700  
+
+For more details see [here](https://github.com/jsfenfen/990-xml-reader/edit/master/2014_is_broken.md).
+
 #### Generate the schema files - Not required
 
 Run `$ python manage.py generate_schemas_from_metadata` to generate a django models file (to the directory generated_models). You can modify these and put them into return/models.
