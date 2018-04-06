@@ -100,5 +100,10 @@ ENV/
 # mypy
 .mypy_cache/
 
-#PyCharm
+# PyCharm
 .idea/
+
+# Migrations
+irsdb/filing/migrations/
+irsdb/metadata/migrations/
+irsdb/return/migrations/
