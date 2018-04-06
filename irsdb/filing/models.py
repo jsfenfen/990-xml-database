@@ -7,7 +7,7 @@ from django.conf import settings
 class Filing(models.Model):
 
     # This is set from the index file.
-    submission_year = models.IntegerField(blank=False, null=False, help_text="Index file year")
+    submission_year = models.IntegerField(blank=False, null=False, default=0, help_text="Index file year")
 
     # Verbatim fields set from the csv file
     return_id = models.CharField(max_length=8, blank=False, null=False, default="", help_text="Return ID")
