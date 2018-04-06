@@ -1,3 +1,5 @@
+from email.policy import default
+
 from django.db import models
 from django.conf import settings
 
@@ -8,16 +10,16 @@ class Filing(models.Model):
     submission_year = models.IntegerField(blank=False, null=False, help_text="Index file year")
 
     # Verbatim fields set from the csv file
-    return_id = models.CharField(max_length=8, blank=False, null=False, help_text="Return ID")
-    filing_type = models.CharField(max_length=5, blank=False, null=False, help_text="Always EFILE")
-    ein = models.CharField(max_length=9, blank=False, null=False, help_text="Employer Identification Number")
-    tax_period = models.IntegerField(blank=False, null=False, help_text="Month filed, YYYYMM")
-    sub_date = models.CharField(max_length=22, blank=False, null=False, help_text="Submitted date in YYYY-MM-DD format."
-                                " But submitted to whom?")
-    taxpayer_name = models.CharField(max_length=100, blank=False, null=False, help_text="Organization name")
-    return_type = models.CharField(max_length=5, blank=False, null=False, help_text="Return type")
-    dln = models.CharField(max_length=14, blank=False, null=False, help_text="Document Locator Number")
-    object_id = models.CharField(max_length=18, blank=False, null=False, help_text="IRS-assigned unique ID")
+    return_id = models.CharField(max_length=8, blank=False, null=False, default="", help_text="Return ID")
+    filing_type = models.CharField(max_length=5, blank=False, null=False, default="", help_text="Always EFILE")
+    ein = models.CharField(max_length=9, blank=False, null=False, default="", help_text="Employer ID number")
+    tax_period = models.IntegerField(blank=False, null=False, default=0, help_text="Month filed, YYYYMM")
+    sub_date = models.CharField(max_length=22, blank=False, null=False, default="", help_text="Submitted date in "
+                                "YYYY-MM-DD format. But submitted to whom?")
+    taxpayer_name = models.CharField(max_length=100, blank=False, null=False, default="", help_text="Organization name")
+    return_type = models.CharField(max_length=5, blank=False, null=False, default="", help_text="Return type")
+    dln = models.CharField(max_length=14, blank=False, null=False, default="", help_text="Document Locator Number")
+    object_id = models.CharField(max_length=18, blank=False, null=False, default="", help_text="IRS-assigned unique ID")
 
     # fields we set after processing
     schema_version = models.TextField(null=True, help_text="schema version as it appears, e.g. 2015v2.1 ") 
