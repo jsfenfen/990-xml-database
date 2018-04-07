@@ -132,9 +132,9 @@ from irsx.settings import METADATA_DIRECTORY, KNOWN_SCHEDULES
 
 GENERATED_MODELS_DIR = os.path.join(BASE_DIR, "generated_schemas")
 
-# suppress verbose complaints until we can figure if anythings actually wrong
-import warnings
-warnings.simplefilter(action='ignore', category=RuntimeWarning)
+## suppress verbose complaints by uncommenting
+#import warnings
+#warnings.simplefilter(action='ignore', category=RuntimeWarning)
 
 
 
