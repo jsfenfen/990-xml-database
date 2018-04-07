@@ -1,26 +1,28 @@
 from django.db import models
 from django.conf import settings
 
+
 class Filing(models.Model):
 
     # This is set from the index file.
-    submission_year = models.IntegerField(blank=True, null=True, help_text="Index file year")
+    submission_year = models.IntegerField(blank=False, null=False, default=0, help_text="Index file year")
 
     # Verbatim fields set from the csv file
-    return_id = models.CharField(max_length=31, blank=True, null=True, help_text="return id")
-    filing_type = models.CharField(max_length=31, blank=True, null=True, help_text="probably EFILE")
-    ein = models.CharField(blank=False, max_length=31)
-    tax_period = models.IntegerField(blank=True, null=True, help_text="month filed, YYYYMM")
-    sub_date = models.CharField(max_length=31, blank=True, null=True, help_text="Submitted date in YYYY-MM-DD format. But submitted to whom?")
-    taxpayer_name = models.CharField(max_length=255, blank=True, null=True, help_text="Organization name")
-    return_type = models.CharField(max_length=7, blank=True, null=True, help_text="Return Type")
-    dln = models.CharField(max_length=31, blank=True, null=True, help_text="Download number")
-    object_id = models.CharField(max_length=31, blank=True, null=True, help_text="unique id")
+    return_id = models.CharField(max_length=8, blank=False, null=False, default="", help_text="Return ID")
+    filing_type = models.CharField(max_length=5, blank=False, null=False, default="", help_text="Always EFILE")
+    ein = models.CharField(max_length=9, blank=False, null=False, default="", help_text="Employer ID number")
+    tax_period = models.IntegerField(blank=False, null=False, default=0, help_text="Month filed, YYYYMM")
+    sub_date = models.CharField(max_length=22, blank=False, null=False, default="", help_text="Submitted date in "
+                                "YYYY-MM-DD format. But submitted to whom?")
+    taxpayer_name = models.CharField(max_length=100, blank=False, null=False, default="", help_text="Organization name")
+    return_type = models.CharField(max_length=5, blank=False, null=False, default="", help_text="Return type")
+    dln = models.CharField(max_length=14, blank=False, null=False, default="", help_text="Document Locator Number")
+    object_id = models.CharField(max_length=18, blank=False, null=False, default="", help_text="IRS-assigned unique ID")
 
-
-    ## fields we set after processing
+    # fields we set after processing
     schema_version = models.TextField(null=True, help_text="schema version as it appears, e.g. 2015v2.1 ") 
-    tax_year = models.IntegerField(blank=True, null=True, help_text="The year of the tax period, set this from tax_period")
+    tax_year = models.IntegerField(blank=True, null=True, help_text="The year of the tax period, set this from "
+                                   "tax_period")
     
     # Processing notes
     parse_started = models.NullBooleanField(help_text="Set this true when parsing begins")
@@ -30,7 +32,6 @@ class Filing(models.Model):
     key_error_count = models.IntegerField(blank=True, null=True, help_text="Number of key errors found")
     error_details = models.TextField(null=True, help_text="Describe error condition")
 
-
     def get_aws_URL(self):
         return "https://s3.amazonaws.com/irs-form-990/%s_public.xml" % self.object_id
 
@@ -38,7 +39,7 @@ class Filing(models.Model):
         return os.path.join(XML_DIR, "%s_public.xml" % self.object_id)
 
     class Meta:
-        managed=True
+        managed = True
         indexes = [
             models.Index(fields=['object_id']),
             ]
