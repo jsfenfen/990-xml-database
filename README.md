@@ -114,3 +114,42 @@ With most hosting providers, you'll need to configure additional storage to supp
 You may want to look into tuning your database parameters to better support data loading. And you'll get better performance if you only create indexes after loading is complete (and delete them before bulk loads take place).
 
 One random datapoint: on an Amazon t2.medium ec2 server (~$38/month) with 150 gigs of additional storage and postgres running on the default configs and writing to an SSD EBS volume, load time for the complete set of about 490,000 filings from 2017 took about 3 hours.
+
+#### Monthly load
+
+This assumes no schema changes are required, which is usually the case.
+
+Run an S3 sync to the location of the fillings. The whole collection is now over 80 GB, make sure you have room. You can also retrieve some other way (if you don't retrieve en masse the load_filings.py script will attempt to download one filing at a time). It's useful to run this with nohup, i.e.
+
+	nohup aws s3 sync s3://irs-form-990/ ./ & 
+
+Then update the index file data
+
+	$ python manage.py enter_yearly_submissions 2018
+	
+	
+	index_2018.csv has changed. Downloading updated file...
+	Done!
+	Entering xml submissions from /home/webuser/virt/env/lib/python3.5/site-packages/irsx/CSV/index_2018.csv
+	
+	Committing 10000 total entered=10000
+	commit complete
+	Committing 10000 total entered=20000
+	commit complete
+	Added 24043 new entries.
+	
+Then enter the filings into the relational database with:
+
+	$ python manage.py load_filings 2018
+	
+	Running filings during year 2018
+	Processed a total of 100 filings
+	Processed a total of 200 filings
+	Processed a total of 300 filings
+	
+	...
+	
+	Handled 24000 filings
+	Processed a total of 24000 filings
+	Processed a total of 24043 filings
+	Done
