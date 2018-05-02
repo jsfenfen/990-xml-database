@@ -15,7 +15,7 @@ from irsx.xmlrunner import XMLRunner
 
 # this is how many we process; there's a separate batch size
 # in model accumulator for how many are processed
-BATCH_SIZE = 100
+BATCH_SIZE = 1
 
 
 class Command(BaseCommand):
@@ -66,7 +66,13 @@ class Command(BaseCommand):
         result = parsed_filing.get_result()
             
         keyerrors = parsed_filing.get_keyerrors()
-        
+        schema_version = parsed_filing.get_version()
+        ## This could be disabled if we don't care about the schema version
+        ## This is one save per loaded row...
+        if filing.schema_version != schema_version:
+            filing.schema_version = schema_version
+            filing.save()
+  
         if keyerrors:
             # If we find keyerrors--xpaths that are missing from our spec, note it
             print("Key error %s")
@@ -109,8 +115,8 @@ class Command(BaseCommand):
                 #print("Handling id %s" % filing.object_id)
                 self.run_filing(filing)
                 process_count += 1
-                if process_count % 1000 == 0:
-                    print("Handled %s filings" % process_count)
+                #if process_count % 1000 == 0:
+                print("Handled %s filings" % process_count)
 
             # commit anything that's left
             self.accumulator.commit_all()
