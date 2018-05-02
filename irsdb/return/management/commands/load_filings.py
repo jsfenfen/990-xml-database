@@ -15,7 +15,7 @@ from irsx.xmlrunner import XMLRunner
 
 # this is how many we process; there's a separate batch size
 # in model accumulator for how many are processed
-BATCH_SIZE = 1
+BATCH_SIZE = 1000
 
 
 class Command(BaseCommand):
@@ -115,8 +115,8 @@ class Command(BaseCommand):
                 #print("Handling id %s" % filing.object_id)
                 self.run_filing(filing)
                 process_count += 1
-                #if process_count % 1000 == 0:
-                print("Handled %s filings" % process_count)
+                if process_count % 1000 == 0:
+                    print("Handled %s filings" % process_count)
 
             # commit anything that's left
             self.accumulator.commit_all()
