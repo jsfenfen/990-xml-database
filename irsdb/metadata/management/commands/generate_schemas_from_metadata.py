@@ -131,7 +131,8 @@ class Command(BaseCommand):
         
 
         groups_in_this_sked = Group.objects.filter(
-            parent_sked=schedule
+            parent_sked=schedule,
+            versions__contains=CANONICAL_VERSION,
         ).order_by('ordering',)
 
         for group in groups_in_this_sked:

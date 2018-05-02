@@ -19,7 +19,10 @@ KNOWN_SCHEDULES = settings.KNOWN_SCHEDULES
 # which reflect the files, rather than the data
 
 # The base of the file system
-FILE_SYSTEM_BASE = settings.FILE_SYSTEM_BASE
+try:
+    FILE_SYSTEM_BASE = settings.FILE_SYSTEM_BASE
+except ImportError:
+    FILE_SYSTEM_BASE = ''
 # When set to true will 'cache' a baked version of the page
 # To run a full bake, run a 'scrape' of every page that needs update
 # Then deploy files
