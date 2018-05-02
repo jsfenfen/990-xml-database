@@ -62,7 +62,7 @@ class Filing(models.Model):
         result = VERSION_RE.search(returnline)
         if result:
             if result != self.schema_version:
-                self.schema_version = result
+                self.schema_version = result.group(1)
                 self.save()
         else:
             print("No result in object_id: %s returnline:%s" % (self.object_id, returnline))
