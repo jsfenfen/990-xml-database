@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'metadata',
     'filing',
     'return',
+    'schemas',
 
 ]
 
