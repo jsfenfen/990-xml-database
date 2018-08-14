@@ -42,7 +42,7 @@ We can see that it worked by diffing it.
 
 For more details see [here](https://github.com/jsfenfen/990-xml-reader/blob/master/2014_is_broken.md).
 
-### Part 5: Generate the schema files - Not reccomended, this is only used when regenerating models for a new IRSX version
+### Part 5: Generate the schema files - Not recommended, this is only used when regenerating models for a new IRSX version
 
 Run `$ python manage.py generate_schemas_from_metadata` to generate a django models file (to the directory generated_models). You can modify these and put them into return/models.
 
