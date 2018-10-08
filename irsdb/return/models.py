@@ -6113,6 +6113,13 @@ class skeda_part_v(models.Model):
     DstrbtnAllctns_ExcssDstrCyvTNxtYrAmt = models.BigIntegerField(null=True, blank=True)
     # Line number:  Part V Section E Line 7(i)  Description:  Excess distribution carryover to next year  most recent xpath: /IRS990ScheduleA/DistributionAllocationsGrp/ExcessDistriCyovToNextYrAmt 
 
+    ExcssDstrbtnCyvYr4Amt = models.BigIntegerField(null=True, blank=True)
+    # Line number:  Part V Section E Line 3(b)  Description:  Excess distributions carryover - year 4  most recent xpath: /IRS990ScheduleA/DistributionAllocationsGrp/ExcessDistributionCyovYr4Amt 
+
+    ExcssFrmYr5Amt = models.BigIntegerField(null=True, blank=True)
+    # Line number:  Part V Section E Line 8a  Description:  Excess from year 5  most recent xpath: /IRS990ScheduleA/DistributionAllocationsGrp/ExcessFromYear5Amt 
+
+
     DstrbtnAllctns_ExcssFrmYr4Amt = models.BigIntegerField(null=True, blank=True)
     # Line number:  Part V Section E Line 8b  Description:  Excess from year 4  most recent xpath: /IRS990ScheduleA/DistributionAllocationsGrp/ExcessFromYear4Amt 
 
