@@ -1,7 +1,9 @@
 # 990-xml-database
 Django app to consume and store 990 data and metadata. Depends on [IRSx](https://github.com/jsfenfen/990-xml-reader) (which is installed as a dependency below).
 
-## Setup
+## Setup and use
+
+### Part 1: clone the repo and configure the app
 
 1. git clone this repository `git clone https://github.com/jsfenfen/990-xml-database.git` and `$ cd 990-xml-database`
 
@@ -9,18 +11,23 @@ Django app to consume and store 990 data and metadata. Depends on [IRSx](https:/
 
 3. copy the irsdb/local\_settings.py-example file to irsdb\/local_settings.py and edit it to reflect your database settings.
 
-#### Adding the metadata
+
+### Part 2: Add the metadata
+ 
 
 1. run `python manage.py makemigrations metadata` to generate the metadata migrations, and then run them with `python manage.py migrate metadata`.
 
 2. Load the metadata with the management command: `python manage.py load_metadata`. This command erases the metadata before loading, so it can be rerun if it somehow breaks in the middle.
 
-#### Adding index file data 
+### Part 3: index file data 
+
+The IRS releases metadata files which include the unique id, EIN and other information about each .xml filing. We need to put this in the database to make sense of the raw filings.
 
 1.  run `python manage.py makemigrations filing` to generate the filing migrations, and then run them with `python manage.py migrate filing`.
 
 2. Run `$ python manage.py enter_yearly_submissions <YYYY>` where YYYY is a the year corresponding to a yearly index file that has already been downloaded. { If it hasn't been downloaded you can retrieve it with irsx_index --year=YYYY }. This script checks to see if the IRS' index file is any bigger than the one one disk, and only runs if it has. You can force it to try to enter any new filings (regardless of whether the file is updated) with the `--enter` option.
 
+#### Sidebar: 2014 file may need fixing
 __There's a problem with the 2014 index file.__ An internal comma has "broken" the .csv format for some time. You can fix it with a perl one liner (which first backs the file up to index_2014.csv.bak before modifying it)
 
 	$ perl -i.bak -p -e 's/SILVERCREST ASSET ,AMAGEMENT/SILVERCREST ASSET MANAGEMENT/g' index_2014.csv
@@ -35,19 +42,20 @@ We can see that it worked by diffing it.
 
 For more details see [here](https://github.com/jsfenfen/990-xml-reader/blob/master/2014_is_broken.md).
 
-#### Generate the schema files - Not required
+### Part 5: Generate the schema files - Not recommended, this is only used when regenerating models for a new IRSX version
 
 Run `$ python manage.py generate_schemas_from_metadata` to generate a django models file (to the directory generated_models). You can modify these and put them into return/models.
 
-#### Create the return tables
+### Part 6. Create the return tables
 
-This is just another migration, but it creates 180 tables. Django seems to spit out a lotta warnings, they don't seem to reflect actual problems? 
+Create the tables in the return model by running the migrations.
+
 `$ python manage.py makemigrations return`
 To make the migrations and   
 `$ python manage.py migrate return`
 to run them.
 
-#### Load the filings
+### Part 7. Load the filings
 
 Actually enter the filings into the database with 
 `$ python manage.py load_filings <YYYY>`. 
@@ -61,7 +69,7 @@ Which detaches the terminal from the process, so if your connection times out th
 
 You may want to adjust your postgres settings for better loading, but you'll need to pay attention to overall memory and resource uses. 
 
-
+### Post-loading concerns
 
 
 #### Analyze the load process
