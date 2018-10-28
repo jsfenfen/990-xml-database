@@ -28,9 +28,12 @@ class Command(BaseCommand):
 
             local_file_path = os.path.join(INDEX_DIRECTORY, "index_%s.csv" % year)
 
-            print('Downloading index_%s.csv...' % year)
-            stream_download(irs_file_url, local_file_path)
-            print('Done!')
+            if os.path.isfile(local_file_path):
+                print('Found index_%s.csv...' % year)
+            else:
+                print('Downloading index_%s.csv...' % year)
+                stream_download(irs_file_url, local_file_path)
+                print('Done!')
 
             print("Entering xml submissions from %s" % local_file_path)
             fh = open(local_file_path, 'r')
