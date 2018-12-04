@@ -18,7 +18,8 @@ class Variable(IRSxBase):
     db_type = models.CharField(max_length=63, blank=True, null=True, help_text="db type", editable=False)
     line_number = models.CharField(max_length=255, blank=True, null=True, help_text="IRS line number. Missing in returnheader", editable=False)
     description = models.TextField(help_text="IRS-supplied description, from .xsd. ") 
-    versions = models.TextField(help_text="semicolon-delimited  ") 
+    version_start = models.TextField(help_text="Start year", null=True) 
+    version_end = models.TextField(help_text="End year", null=True) 
     is_canonical = models.NullBooleanField(help_text="", default=False) 
     canonical_version = models.CharField(max_length=16, blank=True, null=True, help_text="canonical_version", editable=False)
 
@@ -30,7 +31,8 @@ class Group(IRSxBase):
     line_number = models.CharField(max_length=255, blank=True, null=True, help_text="IRS-supplied line numbers. Missing for returnheaders", editable=False) 
     description = models.TextField(help_text="IRS-supplied description, from .xsd. ") 
     headless = models.NullBooleanField(help_text="", default=False) 
-    versions = models.TextField(help_text="IRS-supplied description, from .xsd. ")
+    version_start = models.TextField(help_text="Start year", null=True) 
+    version_end = models.TextField(help_text="End year", null=True) 
 
     def get_absolute_url(self):
         return ("/metadata/groups/%s.html" % self.db_name)
@@ -48,10 +50,12 @@ class SchedulePart(IRSxBase):
 
 class LineNumber(models.Model):
     xpath = models.CharField(max_length=255, blank=True, null=True, help_text="xpath", editable=False) #is this not equivalent to xpath? 
-    versions = models.TextField(help_text="versions") 
+    version_start = models.TextField(help_text="Start year", null=True) 
+    version_end = models.TextField(help_text="End year", null=True) 
     line_number = models.CharField(max_length=255, blank=True, null=True, help_text="IRS-supplied line numbers. Missing for returnheaders", editable=False) 
 
 class Description(models.Model):
     xpath = models.CharField(max_length=255, blank=True, null=True, help_text="xpath", editable=False) #is this not equivalent to xpath? 
-    versions = models.TextField(help_text="versions") 
+    version_start = models.TextField(help_text="Start year", null=True) 
+    version_end = models.TextField(help_text="End year", null=True) 
     description = models.TextField(help_text="description") 

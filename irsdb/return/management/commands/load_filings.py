@@ -52,8 +52,8 @@ class Command(BaseCommand):
 
 
     def run_filing(self, filing):
-
         object_id = filing.object_id
+        print("run_filing %s" % object_id)
 
         parsed_filing = self.xml_runner.run_filing(object_id)
         if not parsed_filing:

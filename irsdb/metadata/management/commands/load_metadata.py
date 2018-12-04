@@ -24,11 +24,11 @@ class Command(BaseCommand):
             if i%REPORT_COUNT == 0:
                 print("Created %s rows" % i)
 
-            if CANONICAL_VERSION in row['versions']:
-                row['is_canonical'] = True
-                row['canonical_version'] = CANONICAL_VERSION
-            else:
-                row['is_canonical'] = False
+            #if CANONICAL_VERSION in row['versions']:
+            #    row['is_canonical'] = True
+            #    row['canonical_version'] = CANONICAL_VERSION
+            #else:
+            #    row['is_canonical'] = False
             Variable.objects.create(**row)
         print("Total Variables %s" % i)
 

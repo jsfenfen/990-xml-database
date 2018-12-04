@@ -116,7 +116,7 @@ class Command(BaseCommand):
 
             variables_in_this_part = Variable.objects.filter(
                 parent_sked_part=form_part.parent_sked_part,
-                versions__contains=CANONICAL_VERSION,
+                version_end='',
             ).exclude(in_a_group=True).order_by('ordering',)
             if variables_in_this_part:
                 # only write it if it contains anything
@@ -132,7 +132,7 @@ class Command(BaseCommand):
 
         groups_in_this_sked = Group.objects.filter(
             parent_sked=schedule,
-            versions__contains=CANONICAL_VERSION,
+            version_end='',
         ).order_by('ordering',)
 
         for group in groups_in_this_sked:
@@ -148,7 +148,7 @@ class Command(BaseCommand):
 
             variables_in_this_group = Variable.objects.filter(
                     db_table=group.db_name,
-                    versions__contains=CANONICAL_VERSION,
+                    version_end='',
                 ).order_by('ordering',)
 
             if variables_in_this_group:
