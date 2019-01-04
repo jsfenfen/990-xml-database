@@ -13,7 +13,7 @@ BATCH_SIZE = 10000
 
 class Command(BaseCommand):
     help = '''
-    Read the yearly csv file line by line and add new lines if 
+    Read the yearly csv file line by line and add new lines if
     they don't exist. Lines are added in bulk at the end.
     '''
 
@@ -23,14 +23,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for year in options['year']:
-            irs_file_url = 'https://s3.amazonaws.com/irs-form-990/index_%s.csv' % year
-            irs_file_len = 0
-
             local_file_path = os.path.join(INDEX_DIRECTORY, "index_%s.csv" % year)
 
-            print('Downloading index_%s.csv...' % year)
-            stream_download(irs_file_url, local_file_path)
-            print('Done!')
+            if not os.path.exists(local_file_path):
+                irs_file_url = 'https://s3.amazonaws.com/irs-form-990/index_%s.csv' % year
+                print('Downloading index_%s.csv...' % year)
+                stream_download(irs_file_url, local_file_path)
+                print('Done!')
 
             print("Entering xml submissions from %s" % local_file_path)
             fh = open(local_file_path, 'r')
