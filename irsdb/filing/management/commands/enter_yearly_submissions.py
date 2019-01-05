@@ -48,7 +48,7 @@ class Command(BaseCommand):
                     print("Error with line: {line}".format(line=line))
                     if year == 2014:
                         print('Did you fix the 2014 index file? See the README for instructions.')
-                    raise err
+                    raise
 
                 try:
                     obj = Filing.objects.get(object_id=object_id)
