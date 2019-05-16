@@ -93,8 +93,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         year = int(options['year'][0])
-        if year not in [2014, 2015, 2016, 2017, 2018]:
-            raise RuntimeError("Illegal year `%s`. Please enter a year between 2014 and 2018" % year)
+        if year not in [2014, 2015, 2016, 2017, 2018, 2019]:
+            raise RuntimeError("Illegal year `%s`. Please enter a year between 2014 and 2019" % year)
         
         print("Running filings during year %s" % year)
         self.setup()
