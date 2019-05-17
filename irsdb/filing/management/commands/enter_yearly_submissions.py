@@ -25,7 +25,9 @@ class Command(BaseCommand):
         for year in options['year']:
             local_file_path = os.path.join(INDEX_DIRECTORY, "index_%s.csv" % year)
 
-            if not os.path.exists(local_file_path):
+            # Try for a new file everytime
+            # but don't overwrite 2014, because that file's got an error
+            if year != 2014:
                 irs_file_url = 'https://s3.amazonaws.com/irs-form-990/index_%s.csv' % year
                 print('Downloading index_%s.csv...' % year)
                 stream_download(irs_file_url, local_file_path)

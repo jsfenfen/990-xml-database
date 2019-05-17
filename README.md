@@ -161,3 +161,5 @@ Then enter the filings into the relational database with:
 	Processed a total of 24000 filings
 	Processed a total of 24043 filings
 	Done
+	
+This script finds filings where `submission_year` is the entered year and `parse_complete` has not been set to True. It enters them in groups of 100 and sets `parse_complete` to True after each batch has completed. The script is fairly fault tolerant, but if it dies in the middle it's important to remove all the half entered filings where `parse_started` = True and `parse_complete` is not True. (By default it is null, so don't try to match on `parse_complete` = False). 
