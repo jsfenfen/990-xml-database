@@ -9,7 +9,7 @@ Django app to consume and store 990 data and metadata. Depends on [IRSx](https:/
 
 2. install the requirements with `pip install -r requirements.txt`. This is Django 2, so only python3 is supported.
 
-3. copy the irsdb/local\_settings.py-example file to irsdb\/local_settings.py and edit it to reflect your database settings.
+3. copy the irsdb/irsdb/local\_settings.py-example file to irsdb/irsdb/local_settings.py and edit it to reflect your database settings.
 
 
 ### Part 2: Add the metadata

@@ -12,11 +12,11 @@ from schemas.model_accumulator import Accumulator
 from irsx.settings import INDEX_DIRECTORY
 from irsx.file_utils import stream_download
 from irsx.xmlrunner import XMLRunner
+from irsx.filing import InvalidXMLException
 
 # this is how many we process; there's a separate batch size
 # in model accumulator for how many are processed
 BATCH_SIZE = 1000
-
 
 class Command(BaseCommand):
     help = '''
@@ -37,31 +37,38 @@ class Command(BaseCommand):
 
     def process_sked(self, sked):
         """ Enter just one schedule """ 
-        #print("Processing schedule %s" % sked['schedule_name'])
+        #self.stdout.write("Processing schedule %s" % sked['schedule_name'])
         for part in sked['schedule_parts'].keys():
             partname = part
             partdata = sked['schedule_parts'][part]
-            #print("part %s %s" % (partname, partdata))
+            #self.stdout.write("part %s %s" % (partname, partdata))
 
             self.accumulator.add_model(partname, partdata)
 
         for groupname in sked['groups'].keys():
             for groupdata in sked['groups'][groupname]:
-                #print("group %s %s" % (groupname, groupdata) )
+                #self.stdout.write("group %s %s" % (groupname, groupdata) )
                 self.accumulator.add_model(groupname, groupdata)
 
 
     def run_filing(self, filing):
         object_id = filing.object_id
-        print("run_filing %s" % object_id)
 
-        parsed_filing = self.xml_runner.run_filing(object_id)
+        self.stdout.write("run_filing %s" % object_id)
+
+        # if we get a bad xml file, delete the file and retry once
+        try:
+            parsed_filing = self.xml_runner.run_filing(object_id)
+        except InvalidXMLException as e:
+            os.remove(e.filepath)
+            parsed_filing = self.xml_runner.run_filing(object_id)
+
         if not parsed_filing:
-            print("Skipping filing %s(filings with pre-2013 filings are skipped)\n row details: %s" % (filing, metadata_row))
+            self.stderr.write("Skipping filing %s(filings with pre-2013 filings are skipped)\n row details: %s" % (filing, metadata_row))
             return None
         
         schedule_list = parsed_filing.list_schedules()
-        #print("sked list is %s" % schedule_list)
+        #self.stdout.write("sked list is %s" % schedule_list)
 
         result = parsed_filing.get_result()
             
@@ -75,9 +82,8 @@ class Command(BaseCommand):
   
         if keyerrors:
             # If we find keyerrors--xpaths that are missing from our spec, note it
-            print("Key error %s")
             has_keyerrors = len(keyerrors) > 0
-            print("keyerror: %s" % keyerrors)
+            self.stderr.write("keyerror: %s" % keyerrors)
             filing.error_details = str(keyerrors)
             filing.key_error_count = len(keyerrors)
             filing.is_error = has_keyerrors
@@ -87,7 +93,7 @@ class Command(BaseCommand):
             for sked in result:
                 self.process_sked(sked)
         else:
-            print("Filing not parsed %s " % object_id)
+            self.stderr.write("Filing not parsed %s " % object_id)
 
 
     def handle(self, *args, **options):
@@ -96,14 +102,14 @@ class Command(BaseCommand):
         if year not in [2014, 2015, 2016, 2017, 2018, 2019]:
             raise RuntimeError("Illegal year `%s`. Please enter a year between 2014 and 2019" % year)
         
-        print("Running filings during year %s" % year)
+        self.stdout.write("Running filings during year %s" % year)
         self.setup()
 
         process_count = 0
         while True:
             filings=Filing.objects.filter(submission_year=year).exclude(parse_complete=True)[:100]
             if not filings:
-                print("Done")
+                self.stdout.write("Done")
                 break
 
             object_id_list = [f.object_id for f in filings]
@@ -112,14 +118,14 @@ class Command(BaseCommand):
             Filing.objects.filter(object_id__in=object_id_list).update(parse_started=True)
 
             for filing in filings:
-                #print("Handling id %s" % filing.object_id)
+                #self.stdout.write("Handling id %s" % filing.object_id)
                 self.run_filing(filing)
                 process_count += 1
                 if process_count % 1000 == 0:
-                    print("Handled %s filings" % process_count)
+                    self.stdout.write("Handled %s filings" % process_count)
 
             # commit anything that's left
             self.accumulator.commit_all()
             # record that all are complete
             Filing.objects.filter(object_id__in=object_id_list).update(process_time=datetime.now(), parse_complete=True)
-            print("Processed a total of %s filings" % process_count)
+            self.stdout.write("Processed a total of %s filings" % process_count)
