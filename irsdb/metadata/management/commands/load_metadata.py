@@ -29,6 +29,7 @@ class Command(BaseCommand):
             #    row['canonical_version'] = CANONICAL_VERSION
             #else:
             #    row['is_canonical'] = False
+            row['versions'] = row['versions'].split(';')
             Variable.objects.create(**row)
         print("Total Variables %s" % i)
 
@@ -39,6 +40,7 @@ class Command(BaseCommand):
         infile = open(infile, 'r')
         reader = csv.DictReader(infile)
         for i, row in enumerate(reader):
+            row['versions'] = row['versions'].split(';')
             try:
                 if row['headless'] == '':
                     row['headless'] = None
@@ -73,6 +75,7 @@ class Command(BaseCommand):
         infile = open(infile, 'r')
         reader = csv.DictReader(infile)
         for i, row in enumerate(reader):
+            row['versions'] = row['versions'].split(';')
             if i%REPORT_COUNT == 0:
                 print("Created %s rows" % i)
             LineNumber.objects.create(**row)
@@ -85,6 +88,7 @@ class Command(BaseCommand):
         infile = open(infile, 'r')
         reader = csv.DictReader(infile)
         for i, row in enumerate(reader):
+            row['versions'] = row['versions'].split(';')
             if i%REPORT_COUNT == 0:
                 print("Created %s rows" % i)
             Description.objects.create(**row)

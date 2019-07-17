@@ -21,7 +21,7 @@ KNOWN_SCHEDULES = settings.KNOWN_SCHEDULES
 # The base of the file system
 try:
     FILE_SYSTEM_BASE = settings.FILE_SYSTEM_BASE
-except ImportError:
+except AttributeError:
     FILE_SYSTEM_BASE = ''
 # When set to true will 'cache' a baked version of the page
 # To run a full bake, run a 'scrape' of every page that needs update
