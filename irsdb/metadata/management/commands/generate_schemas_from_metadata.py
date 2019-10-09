@@ -116,7 +116,7 @@ class Command(BaseCommand):
 
             variables_in_this_part = Variable.objects.filter(
                 parent_sked_part=form_part.parent_sked_part,
-                version_end='',
+                version_end__in=['','2016', '2017', '2018'],
             ).exclude(in_a_group=True).order_by('ordering',)
             if variables_in_this_part:
                 # only write it if it contains anything
@@ -148,7 +148,7 @@ class Command(BaseCommand):
 
             variables_in_this_group = Variable.objects.filter(
                     db_table=group.db_name,
-                    version_end='',
+                    version_end__in=['','2016', '2017', '2018'],
                 ).order_by('ordering',)
 
             if variables_in_this_group:

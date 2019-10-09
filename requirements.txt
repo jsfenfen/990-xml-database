@@ -4,6 +4,9 @@ Django>=2.0.1
 # for postgres:
 psycopg2
 
+# for mysql 
+# mysqlclient
+
 # 
 irsx
 requests
