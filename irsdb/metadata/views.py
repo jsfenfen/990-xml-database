@@ -29,6 +29,7 @@ except ImportError:
 # Any new static files need to be moved into place, this is just a hack
 
 BAKE_OUT = True
+
 def bake(request, template, context, filepath=None):
     path = request.META['PATH_INFO']
     if filepath:
@@ -50,8 +51,8 @@ def show_xpath(request, xpath):
 
     print("Xpath is '%s'" % xpath)
     this_variable = get_object_or_404(Variable, xpath=xpath)
-    line_numbers = LineNumber.objects.filter(xpath=xpath).order_by('versions')
-    descriptions = Description.objects.filter(xpath=xpath).order_by('versions')
+    line_numbers = LineNumber.objects.filter(xpath=xpath)
+    descriptions = Description.objects.filter(xpath=xpath)
     if len(line_numbers)<2:
         line_numbers = None
     if len(descriptions)<2:
@@ -86,15 +87,18 @@ def show_variable(request, db_name, variable_name):
     Show a single variable
     """
     print("Variable is '%s'" % variable_name)
-    variables = Variable.objects.filter(db_table=db_name, db_name=variable_name).order_by('-versions')
+    variables = Variable.objects.filter(db_table=db_name, db_name=variable_name)
     this_variable = variables[0]
-    xpaths = variables.values_list('xpath', 'versions')
+    xpaths = variables.values_list('xpath', 'version_start', 'version_end')
     result_xpaths = []
     for xpath in xpaths:
         result_xpaths.append({
             'xpath':xpath[0],
             'url':"/metadata/xpath/" + xpath[0].replace("/","-") + ".html",
-            'versions':xpath[1]})
+            'version_start':xpath[1], 
+            'version_end':xpath[2], 
+            })
+
     print("xpaths are %s" % result_xpaths)
 
 
@@ -123,7 +127,7 @@ def show_part(request, part):
             })
             group_names.append(group.db_name)
 
-    variables = Variable.objects.filter(parent_sked_part=part, is_canonical=True, in_a_group=False).order_by('ordering')
+    variables = Variable.objects.filter(parent_sked_part=part, in_a_group=False).exclude(version_end__in=['2013', '2014', '2015']).order_by('line_number', 'ordering')
     context = {
         'this_part': this_part, 
         'variables':variables,
@@ -137,7 +141,7 @@ def show_part(request, part):
 
 def show_group(request, group):
     this_group = Group.objects.filter(db_name=group)[0]
-    variables = Variable.objects.filter(db_table=group, is_canonical=True).order_by('ordering')
+    variables = Variable.objects.filter(db_table=group).exclude(version_end__in=['2013', '2014', '2015']).order_by('line_number', 'ordering')
 
     template = 'metadata/group.html'
     context = {

@@ -1,3 +1,4 @@
+import os
 
 from django.core.management.base import BaseCommand
 from metadata.models import *
@@ -8,7 +9,10 @@ import requests
 
 METADATA_DIRECTORY = settings.METADATA_DIRECTORY
 REPORT_COUNT = 100
-CANONICAL_VERSION = '2016v3.0'
+
+
+FILE_SYSTEM_BASE = settings.FILE_SYSTEM_BASE
+
 
 class Command(BaseCommand):
     help = """
@@ -52,8 +56,16 @@ class Command(BaseCommand):
         self.hit_url("http://localhost:8000/metadata/about.html")
         self.hit_url("http://localhost:8000/metadata/forms.html")
 
+    def create_dirs(self):
+        for subdir in ["parts", "groups", "variable", "xpath"]:
+            try:
+                os.makedirs(os.path.join( FILE_SYSTEM_BASE, "metadata", subdir))
+            except FileExistsError:
+                print("File %s exists skipping" % subdir)
+
     def handle(self, *args, **options):
         print("Baking out urls")
+        self.create_dirs()
         self.run_nav()
         self.run_parts()
         self.run_groups()

@@ -26,13 +26,13 @@
 <p class="lead ">Description: {{this_variable.description }}</p>
 <p class="lead ">IRS Type: {{this_variable.irs_type }}</p>
 <p class="lead ">Repeating: {{this_variable.in_a_group }}</p>
-<p class="lead ">versions: {{this_variable.versions }}</p>
+<p class="lead ">Years: {{this_variable.version_start }}-{{this_variable.version_end }}</p>
 
 {% if line_numbers %}
 <p class="h3 ">Line numbers:</p>
 {% for line_number in line_numbers %}
 <p class="lead indent2">Line number: {{line_number.line_number }}</p>
-<p class="lead indent2">Versions: {{line_number.versions }}</p>
+<p class="lead indent2">Years: {{line_number.version_start }} - {{line_number.version_end }}</p>
 <br>
 {% endfor %}
 {% endif %}
@@ -41,7 +41,6 @@
 <p class="h3 ">Descriptions</p>
 {% for description in descriptions %}
 <p class="lead indent2">Description: {{description.description }}</p>
-<p class="lead indent2">Versions: {{description.versions }}</p>
 <br>
 {% endfor %}
 {% endif %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+
+{% block title %}{{ this_variable.db_table }}-{{ this_variable.db_name }}{% endblock %}
+
+{% block content %}
+<div class="top_matter">
+<ol class="breadcrumb">
+  <li class="breadcrumb-item"><a href="/metadata/forms.html">Forms</a></li>
+  <li class="breadcrumb-item"><a href="/metadata/forms.html#{{this_variable.parent_sked }}">{{this_variable.parent_sked }}</a></li>
+  <li class="breadcrumb-item"><a href="/metadata/parts/{{ this_variable.parent_sked_part }}.html">{{this_variable.parent_sked_part }}</a></li>
+  {% if this_variable.in_a_group %}
+  <li class="breadcrumb-item">Repeating Group: <a href="/metadata/groups/{{ this_variable.db_table }}.html">{{this_variable.db_table }}</a></li>
+
+  {% endif %}
+  <li class="breadcrumb-item active">Variable Details: {{ this_variable.db_name }}</li>
+</ol>
+<p class="h2">Variable Details: {{ this_variable.db_name }}</p>
+</div>
+<div>
+<p class="h3">DB Table: <a href="{% if this_variable.in_a_group %}/metadata/groups/{{this_variable.db_table}}{% else %}/metadata/parts/{{this_variable.db_table}}{% endif %}.html">{{ this_variable.db_table }}</a></p>
+<p class="h3">DB Name: {{ this_variable.db_name }}</p>
+
+<p class="lead">Line number: {{this_variable.line_number }}</p>
+<p class="lead">Description: {{this_variable.description }}</p>
+<p class="lead">IRS Type: {{this_variable.irs_type }}</p>
+<p class="lead">Repeating: {{this_variable.in_a_group }}</p>
+
+{% if xpaths %}
+<p class="h3">Xpath details</p>
+{% for xpath in xpaths %}
+<p class="lead"><a href="{{xpath.url}}">Xpath: {{xpath.xpath }}</a></p>
+<p class="lead">Years: {{ xpath.version_start }} - {{ xpath.version_end }}
+
+{% endfor %}
+{% endif %}
+</div>
+
+
+{% endblock  %}
