@@ -14,3 +14,28 @@ DATABASES = {
     }
 }
 
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+DEBUG=True
+ALLOWED_HOSTS = ['localhost',]
+
+FILE_SYSTEM_BASE = os.path.join(BASE_DIR, 'baked_site')
+USE_TZ = True
+TEMPLATE_ROOT = os.path.join(BASE_DIR, 'templates/')
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [TEMPLATE_ROOT,],
+        'APP_DIRS': False,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
