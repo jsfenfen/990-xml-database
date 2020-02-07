@@ -10,15 +10,16 @@
 DROP TABLE IF EXISTS grants;
 
 SELECT 
+       return_SkdIRcpntTbl.object_id as object_id,
        address_table."RtrnHdr_TxPrdEndDt",
        address_table."RtrnHdr_TxYr",
        address_table."BsnssOffcr_SgntrDt",
        address_table."BsnssNm_BsnssNmLn1Txt" as "Donor_BsnssNmLn1",
-       address_table."BsnssNm_BsnssNmLn2Txt" as "Donor_BsnssNmL21",
+       address_table."BsnssNm_BsnssNmLn2Txt" as "Donor_BsnssNmLn2",
        address_table."BsnssOffcr_PrsnNm" as "Donor_BsnssOffcr_PrsnNm",
-       address_table."BsnssOffcr_PrsnTtlTxt" as "Donor_ BsnssOffcr_PrsnTtlTxt",
-       address_table."BsnssOffcr_PhnNm" as "Donor_ BsnssOffcr_PhnNm" ,
-       address_table."BsnssOffcr_EmlAddrssTxt"  as "Donor_ BsnssOffcr_EmlAddrssTxt" ,
+       address_table."BsnssOffcr_PrsnTtlTxt" as "Donor_BsnssOffcr_PrsnTtlTxt",
+       address_table."BsnssOffcr_PhnNm" as "Donor_BsnssOffcr_PhnNm" ,
+       address_table."BsnssOffcr_EmlAddrssTxt"  as "Donor_BsnssOffcr_EmlAddrssTxt" ,
        address_table."USAddrss_AddrssLn1Txt" as "Donor_AddrssLn1Txt",
        address_table."USAddrss_AddrssLn2Txt" as "Donor_AddrssLn2Txt",
        address_table."USAddrss_CtyNm" as "Donor_CtyNm",
@@ -29,18 +30,31 @@ SELECT
        address_table."FrgnAddrss_CtyNm" as "Donor_FrgnAddrss_CtyNm",
        address_table."FrgnAddrss_PrvncOrSttNm" as "Donor_PrvncOrSttNm",
        address_table."FrgnAddrss_CntryCd" as "Donor_CntryCd",
-       return_SkdIRcpntTbl.* 
-INTO TEMPORARY TABLE grants
-FROM return_SkdIRcpntTbl
-LEFT JOIN address_table 
-ON return_SkdIRcpntTbl.object_id = address_table.object_id
-AND return_SkdIRcpntTbl.ein = address_table.ein;
+       return_SkdIRcpntTbl.ein as "Donor_EIN",
+   	   '' as "RcpntPrsnNm", 
+   	   return_SkdIRcpntTbl."RcpntTbl_RcpntEIN" as "Rcpnt_EIN",
+       return_SkdIRcpntTbl."RcpntBsnssNm_BsnssNmLn1Txt"  as "Rcpnt_BsnssNmLn1",
+       return_SkdIRcpntTbl."RcpntBsnssNm_BsnssNmLn2Txt"  as "Rcpnt_BsnssNmLn2",
+       trim(concat(return_SkdIRcpntTbl."USAddrss_AddrssLn1Txt", ' ', return_SkdIRcpntTbl."FrgnAddrss_AddrssLn1Txt")) as "Rcpnt_AddrssLn1",
+       trim(concat(return_SkdIRcpntTbl."USAddrss_AddrssLn2Txt", ' ', return_SkdIRcpntTbl."FrgnAddrss_AddrssLn2Txt")) as "Rcpnt_AddrssLn2",
+       trim(concat(return_SkdIRcpntTbl."USAddrss_CtyNm", ' ', return_SkdIRcpntTbl."FrgnAddrss_CtyNm")) as "Rcpnt_CtyNm",
+       trim(concat(return_SkdIRcpntTbl."USAddrss_SttAbbrvtnCd", ' ', return_SkdIRcpntTbl."FrgnAddrss_PrvncOrSttNm")) as "Rcpnt_SttAbbrvtnCd",
+	   return_SkdIRcpntTbl."RcpntTbl_CshGrntAmt" as "Rcpnt_Amt",
+	   return_SkdIRcpntTbl."RcpntTbl_PrpsOfGrntTxt" as "Rcpnt_PrpsTxt",
+       trim(concat(return_SkdIRcpntTbl."USAddrss_ZIPCd", ' ', return_SkdIRcpntTbl."FrgnAddrss_FrgnPstlCd")) as "Rcpnt_ZIPCd",
+        ''   as "Rcpnt_Rltnshp",
+		return_SkdIRcpntTbl."RcpntTbl_IRCSctnDsc" as "Rcpnt_FndtnStts"
+	INTO TEMPORARY TABLE grants
+	FROM return_SkdIRcpntTbl
+	LEFT JOIN address_table 
+	ON return_SkdIRcpntTbl.object_id = address_table.object_id
+	AND return_SkdIRcpntTbl.ein = address_table.ein;
 
 
 
 
 -- Add org type data
-select "Orgnztn501c3Ind", "Orgnztn501cInd", "Orgnztn49471NtPFInd", "Orgnztn527Ind", url_base,  '/IRS990ScheduleI' as form, grants.* into temporary table grants_types from grants left join org_types on grants.object_id = org_types.object_id and grants.ein = org_types.ein;
+select "Orgnztn501c3Ind", "Orgnztn501cInd", "Orgnztn49471NtPFInd", "Orgnztn527Ind", url_base,  '/IRS990ScheduleI' as form, grants.* into temporary table grants_types from grants left join org_types on grants.object_id = org_types.object_id and grants."Donor_EIN" = org_types.ein;
 
 -- Then copy to local with \copy: 
 
@@ -61,15 +75,16 @@ select "Orgnztn501c3Ind", "Orgnztn501cInd", "Orgnztn49471NtPFInd", "Orgnztn527In
 DROP TABLE IF EXISTS pfgrants;
 
 SELECT 
+       return_PFGrntOrCntrbtnPdDrYr.object_id as object_id,
        address_table."RtrnHdr_TxPrdEndDt",
        address_table."RtrnHdr_TxYr",
        address_table."BsnssOffcr_SgntrDt",
        address_table."BsnssNm_BsnssNmLn1Txt" as "Donor_BsnssNmLn1",
        address_table."BsnssNm_BsnssNmLn2Txt" as "Donor_BsnssNmLn2",
        address_table."BsnssOffcr_PrsnNm" as "Donor_BsnssOffcr_PrsnNm",
-       address_table."BsnssOffcr_PrsnTtlTxt" as "Donor_ BsnssOffcr_PrsnTtlTxt",
-       address_table."BsnssOffcr_PhnNm" as "Donor_ BsnssOffcr_PhnNm" ,
-       address_table."BsnssOffcr_EmlAddrssTxt"  as "Donor_ BsnssOffcr_EmlAddrssTxt" ,
+       address_table."BsnssOffcr_PrsnTtlTxt" as "Donor_BsnssOffcr_PrsnTtlTxt",
+       address_table."BsnssOffcr_PhnNm" as "Donor_BsnssOffcr_PhnNm" ,
+       address_table."BsnssOffcr_EmlAddrssTxt"  as "Donor_BsnssOffcr_EmlAddrssTxt" ,
        address_table."USAddrss_AddrssLn1Txt" as "Donor_AddrssLn1Txt",
        address_table."USAddrss_AddrssLn2Txt" as "Donor_AddrssLn2Txt",
        address_table."USAddrss_CtyNm" as "Donor_CtyNm",
@@ -80,15 +95,27 @@ SELECT
        address_table."FrgnAddrss_CtyNm" as "Donor_FrgnAddrss_CtyNm",
        address_table."FrgnAddrss_PrvncOrSttNm" as "Donor_PrvncOrSttNm",
        address_table."FrgnAddrss_CntryCd" as "Donor_CntryCd",
-        return_PFGrntOrCntrbtnPdDrYr.*
-       
-		INTO TABLE pfgrants
+       return_PFGrntOrCntrbtnPdDrYr.ein as "Donor_EIN",
+       '' as "Rcpnt_EIN",
+       return_PFGrntOrCntrbtnPdDrYr."GrntOrCntrbtnPdDrYr_RcpntPrsnNm"   as "RcpntPrsnNm",
+       return_PFGrntOrCntrbtnPdDrYr."RcpntBsnssNm_BsnssNmLn1Txt"   as "Rcpnt_BsnssNmLn1",
+       return_PFGrntOrCntrbtnPdDrYr."RcpntBsnssNm_BsnssNmLn2Txt"   as "Rcpnt_BsnssNmLn2",
+       trim(concat(return_PFGrntOrCntrbtnPdDrYr."RcpntUSAddrss_AddrssLn1Txt", ' ', return_PFGrntOrCntrbtnPdDrYr."RcpntFrgnAddrss_AddrssLn1Txt")) as "Rcpnt_AddrssLn1",
+       trim(concat(return_PFGrntOrCntrbtnPdDrYr."RcpntUSAddrss_AddrssLn2Txt", ' ', return_PFGrntOrCntrbtnPdDrYr."RcpntFrgnAddrss_AddrssLn2Txt")) as "Rcpnt_AddrssLn2",
+       trim(concat(return_PFGrntOrCntrbtnPdDrYr."RcpntUSAddrss_CtyNm", ' ', return_PFGrntOrCntrbtnPdDrYr."RcpntFrgnAddrss_CtyNm")) as "Rcpnt_CtyNm",
+       trim(concat(return_PFGrntOrCntrbtnPdDrYr."RcpntUSAddrss_SttAbbrvtnCd", ' ', return_PFGrntOrCntrbtnPdDrYr."RcpntFrgnAddrss_PrvncOrSttNm")) as "Rcpnt_SttAbbrvtnCd",
+	   return_PFGrntOrCntrbtnPdDrYr."GrntOrCntrbtnPdDrYr_Amt" as "Rcpnt_Amt",
+	   return_PFGrntOrCntrbtnPdDrYr."GrntOrCntrbtnPdDrYr_GrntOrCntrbtnPrpsTxt" as "Rcpnt_PrpsTxt",
+       trim(concat(return_PFGrntOrCntrbtnPdDrYr."RcpntUSAddrss_ZIPCd", ' ', return_PFGrntOrCntrbtnPdDrYr."RcpntFrgnAddrss_FrgnPstlCd")) as "Rcpnt_ZIPCd",
+       return_PFGrntOrCntrbtnPdDrYr."GrntOrCntrbtnPdDrYr_RcpntRltnshpTxt"   as "Rcpnt_Rltnshp",
+       return_PFGrntOrCntrbtnPdDrYr."GrntOrCntrbtnPdDrYr_RcpntFndtnSttsTxt"   as "Rcpnt_FndtnStts"
+		INTO TEMPORARY TABLE pfgrants
 			FROM return_PFGrntOrCntrbtnPdDrYr
 			LEFT JOIN address_table ON return_PFGrntOrCntrbtnPdDrYr.object_id = address_table.object_id
 			AND return_PFGrntOrCntrbtnPdDrYr.ein = address_table.ein;
 
 -- Add org type data
-select "Orgnztn501c3Ind", "Orgnztn501cInd", "Orgnztn49471NtPFInd", "Orgnztn527Ind", url_base,  '/IRS990PF' as form, pfgrants.* into temporary table pfgrants_types from pfgrants left join org_types on pfgrants.object_id = org_types.object_id and pfgrants.ein = org_types.ein;
+select "Orgnztn501c3Ind", "Orgnztn501cInd", "Orgnztn49471NtPFInd", "Orgnztn527Ind", url_base,  '/IRS990PF' as form, pfgrants.* into temporary table pfgrants_types from pfgrants left join org_types on pfgrants.object_id = org_types.object_id and pfgrants."Donor_EIN" = org_types.ein;
 
 -- Copy to local 
 
