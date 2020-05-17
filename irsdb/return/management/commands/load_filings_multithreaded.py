@@ -90,8 +90,12 @@ class DownloadWorker(Thread):
         self.accumulator = Accumulator()
         while True:
              filing = self.queue.get()
-             self.run_filing(filing)
-             self.queue.task_done()
+             try:
+                 self.run_filing(filing)
+             except Exception as ex:
+                 print(ex)
+             finally:
+                 self.queue.task_done()
         connection.close()
 
 class Command(BaseCommand):
@@ -162,7 +166,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         year = int(options['year'][0])
-        if year not in [2014, 2015, 2016, 2017, 2018]:
+        if year not in [2014, 2015, 2016, 2017, 2018, 2019]:
             raise RuntimeError("Illegal year `%s`. Please enter a year between 2014 and 2018" % year)
         
         print("Running filings during year %s" % year)
