@@ -27,11 +27,14 @@ class Command(BaseCommand):
 
             # Try for a new file everytime
             # but don't overwrite 2014, because that file's got an error
-            if year != 2014:
+            if not os.path.exists(local_file_path) or year != 2014:
                 irs_file_url = 'https://s3.amazonaws.com/irs-form-990/index_%s.csv' % year
                 print('Downloading index_%s.csv...' % year)
                 stream_download(irs_file_url, local_file_path)
                 print('Done!')
+                if year == 2014:
+                    print("Now, run the perl command to fix 2014!")
+                    exit()
 
             print("Entering xml submissions from %s" % local_file_path)
             fh = open(local_file_path, 'r')
