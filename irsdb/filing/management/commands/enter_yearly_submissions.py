@@ -45,7 +45,8 @@ class Command(BaseCommand):
             count = 0
             for line in reader:
                 try:
-                    (return_id, filing_type, ein, tax_period, sub_date, taxpayer_name, return_type, dln, object_id) = line
+                    # sometimes there's an empty extra column, ignore it
+                    (return_id, filing_type, ein, tax_period, sub_date, taxpayer_name, return_type, dln, object_id) = line[0:9]
                 except ValueError as err:
                     print("Error with line: {line}".format(line=line))
                     if year == 2014:
