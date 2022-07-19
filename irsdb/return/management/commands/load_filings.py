@@ -53,9 +53,10 @@ class Command(BaseCommand):
 
     def run_filing(self, filing):
         object_id = filing.object_id
-        print("run_filing %s" % object_id)
 
+        
         parsed_filing = self.xml_runner.run_filing(object_id)
+
         if not parsed_filing:
             print("Skipping filing %s(filings with pre-2013 filings are skipped)\n row details: %s" % (filing, metadata_row))
             return None
@@ -100,6 +101,9 @@ class Command(BaseCommand):
         self.setup()
 
         process_count = 0
+        missing_filings = 0
+        missed_file_list = []
+
         while True:
             filings=Filing.objects.filter(submission_year=year).exclude(parse_complete=True)[:100]
             if not filings:
@@ -111,9 +115,15 @@ class Command(BaseCommand):
             # record that processing has begun
             Filing.objects.filter(object_id__in=object_id_list).update(parse_started=True)
 
+
             for filing in filings:
                 #print("Handling id %s" % filing.object_id)
-                self.run_filing(filing)
+                try:
+                    self.run_filing(filing)
+                except FileMissingException
+                    print("File missing %s, skipping" % filing.object_id)
+                    missing_filings += 1
+                    missed_file_list.append(filing.object_id)
                 process_count += 1
                 if process_count % 1000 == 0:
                     print("Handled %s filings" % process_count)
@@ -123,3 +133,5 @@ class Command(BaseCommand):
             # record that all are complete
             Filing.objects.filter(object_id__in=object_id_list).update(process_time=datetime.now(), parse_complete=True)
             print("Processed a total of %s filings" % process_count)
+            print("Total missing files: %s" % missing_filings)
+            print("Missing %s" % missed_file_list)
