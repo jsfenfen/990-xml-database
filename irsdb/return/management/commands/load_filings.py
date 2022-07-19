@@ -120,7 +120,7 @@ class Command(BaseCommand):
                 #print("Handling id %s" % filing.object_id)
                 try:
                     self.run_filing(filing)
-                except FileMissingException
+                except FileMissingException:
                     print("File missing %s, skipping" % filing.object_id)
                     missing_filings += 1
                     missed_file_list.append(filing.object_id)
