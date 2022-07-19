@@ -25,13 +25,6 @@ class Command(BaseCommand):
         for year in options['year']:
             local_file_path = os.path.join(INDEX_DIRECTORY, "index_%s.csv" % year)
 
-            # Try for a new file everytime
-            # but don't overwrite 2014, because that file's got an error
-            if year != 2014:
-                irs_file_url = 'https://s3.amazonaws.com/irs-form-990/index_%s.csv' % year
-                print('Downloading index_%s.csv...' % year)
-                stream_download(irs_file_url, local_file_path)
-                print('Done!')
 
             print("Entering xml submissions from %s" % local_file_path)
             fh = open(local_file_path, 'r')
@@ -46,7 +39,9 @@ class Command(BaseCommand):
             for line in reader:
                 try:
                     # sometimes there's an empty extra column, ignore it
-                    (return_id, filing_type, ein, tax_period, sub_date, taxpayer_name, return_type, dln, object_id) = line[0:9]
+                    # RETURN_ID,EIN,TAX_PERIOD,SUB_DATE,TAXPAYER_NAME,RETURN_TYPE,DLN,OBJECT_ID
+                    (return_id, ein, tax_period, sub_date, taxpayer_name, return_type, dln, object_id) = line[0:8]
+                    #print(return_id, ein, tax_period, sub_date, taxpayer_name, return_type, dln, object_id)
                 except ValueError as err:
                     print("Error with line: {line}".format(line=line))
                     if year == 2014:
@@ -59,7 +54,6 @@ class Command(BaseCommand):
                     new_sub = Filing(
                         return_id=return_id,
                         submission_year=year,
-                        filing_type=filing_type,
                         ein=ein,
                         tax_period=tax_period,
                         sub_date=sub_date,
