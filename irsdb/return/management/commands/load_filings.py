@@ -12,6 +12,8 @@ from schemas.model_accumulator import Accumulator
 from irsx.settings import INDEX_DIRECTORY
 from irsx.file_utils import stream_download
 from irsx.xmlrunner import XMLRunner
+from irsx.filing import FileMissingException
+
 
 # this is how many we process; there's a separate batch size
 # in model accumulator for how many are processed
