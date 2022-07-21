@@ -17,9 +17,6 @@ class Command(BaseCommand):
     they don't exist. Lines are added in bulk at the end.
     '''
 
-    def add_arguments(self, parser):
-        # Positional arguments
-        parser.add_argument('year', nargs='+', type=int)
 
     def get_writer(self, headers):   
         outfilehandle = open('results.csv', 'w')
@@ -43,9 +40,9 @@ class Command(BaseCommand):
             try:
                 this_filing = Filing.objects.get(object_id=return_id)
             except Filing.DoesNotExist:
-                print("Filing not present, adding to list")
-                found_files['object_id'] = 1
                 writer.writerow({'object_id': return_id})
+            except Filing.MultipleObjectsReturned:
+                print("Multiple objects returned for %s " % return_id)
 
                 num_found += 1
         print(found_files)
