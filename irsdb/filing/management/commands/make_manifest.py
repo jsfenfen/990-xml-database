@@ -9,7 +9,7 @@ ein_manifest = "ein_manifest.csv"
 
 output_file = "initial_manifest.csv"
 
-headers = ['ein', 'name', 'tax_period', 'form_type', 'is_most_recent', 'missing'] 
+headers = ['ein', 'object_id', 'name', 'tax_period', 'form_type', 'is_most_recent', 'missing'] 
 
 
 
@@ -34,7 +34,8 @@ class Command(BaseCommand):
                     'form_type': filing.return_type,
                     'ein': filing.ein,
                     'tax_period': filing.tax_period,
-                    'is_most_recent':first
+                    'is_most_recent':first,
+                    'object_id':filing.object_id
 
                 }
                 print("'%s' - %s - %s - %s - %s - %s" % (filing.taxpayer_name, filing.return_type, filing.sub_date,  filing.tax_period, filing.return_id, filing.object_id))
