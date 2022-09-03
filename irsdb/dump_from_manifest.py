@@ -6,23 +6,12 @@ from irsx.filing import FileMissingException
 from stream_extractor import StreamExtractor
 
 
-input_file = "initial_manifest.csv"
-
-
-# read the whole file in here, it's not very long
-file_rows = [] 
-
-# We're using the output of part 1
-with open(input_file, 'rb') as infile:
-    reader = csv.DictReader(infile)
-    for row in reader:
-        file_rows.append(row)
 
 output_streams = {
 
     '990_part_0': {
         'filename':'990_part_0',
-        'headers': ["ein", "object_id", ]
+        'headers': ["ein", "object_id", 'Orgnztn527Ind', 'Orgnztn501cInd', 'Orgnztn49471NtPFInd', 'Orgnztn501c3Ind', 'WbstAddrssTxt', 'OfOrgnztnTrstInd', 'OthrOrgnztnDsc', 'OfOrgnztnCrpInd', 'OfOrgnztnOthrInd', 'OfOrgnztnAsscInd', 'FrmtnYr', 'LglDmclSttCd', 'LglDmclCntryCd']
     },
     '990_part_i': {
         'filename':'990_part_i',
@@ -388,6 +377,20 @@ data_capture_dict = {
 }
 
 if __name__ == '__main__':
+
+    input_file = "initial_manifest.csv"
+
+
+
+    # read the whole file in here, it's not very long
+    file_rows = [] 
+
+    # We're using the output of part 1
+    with open(input_file, 'rb') as infile:
+        reader = csv.DictReader(infile)
+        for row in reader:
+            file_rows.append(row)
+        
 
     extractor = StreamExtractor(output_streams, data_capture_dict)
 
