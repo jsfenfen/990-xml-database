@@ -40,8 +40,18 @@ class Command(BaseCommand):
                 try:
                     # sometimes there's an empty extra column, ignore it
                     # RETURN_ID,EIN,TAX_PERIOD,SUB_DATE,TAXPAYER_NAME,RETURN_TYPE,DLN,OBJECT_ID
-                    (return_id, ein, tax_period, sub_date, taxpayer_name, return_type, dln, object_id) = line[0:8]
+                    #(return_id, ein, tax_period, sub_date, taxpayer_name, return_type, dln, object_id) = line[0:8]
+                    
+                    ## for newer style index forms 2020 and on, perhaps
+                    (return_id, filing_type,ein, tax_period, sub_date, taxpayer_name, return_type, dln, object_id) = line[0:9]
+                    # RETURN_ID,FILING_TYPE,EIN,TAX_PERIOD,SUB_DATE,TAXPAYER_NAME,RETURN_TYPE,DLN,OBJECT_ID
                     #print(return_id, ein, tax_period, sub_date, taxpayer_name, return_type, dln, object_id)
+
+                    ### select tax_period, parse_complete, count(*) from filing_filing where parse_started is null group by 1,2 order by 1,2;
+
+                    ### delete from filing_filing where parse_complete is null and tax_period like '2020%';
+
+                    ### select tax_period, parse_complete, count(*) from filing_filing where parse_complete is null and tax_period like '2020%' group by 1,2 order by 1,2;
                 except ValueError as err:
                     print("Error with line: {line}".format(line=line))
                     if year == 2014:
